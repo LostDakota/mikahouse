@@ -1,0 +1,17 @@
+<div ng-controller="servicesController as services" ng-cloak>
+    <div class="container">
+
+        <div class="row">
+            <div class="section-heading">
+                Server Status
+            </div>
+            <div class="col" ng-repeat="stat in services.server">
+                <div class="card">
+                    <i class="fa fa-fw big-icon" ng-class="stat.Icon"></i>
+                    <div ng-bind="stat.Name + ': ' + stat.Value"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

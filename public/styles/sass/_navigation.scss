@@ -1,0 +1,37 @@
+ul.main-navigation{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    list-style: none;
+    display: flex;
+    text-align: center;
+    margin: 0;
+    z-index: 9999;
+    box-shadow: -1px 0 10px rgba(100,100,100,.5);
+    li{
+        flex: 1;
+        padding: .5rem;
+        background: #DDD;
+        &.active{
+            background: #FFF;
+            a{
+                color: #FF5722;
+            } 
+        }
+    }
+    a{
+        text-decoration: none;
+        color: #AAA;
+        transition: 200ms all ease-in-out;               
+    }
+    h6{
+        margin: 0;
+        font-size: .5rem;
+    }
+}
+
+.nav-spacer{
+    height: 4rem;
+    width: 100%;
+}

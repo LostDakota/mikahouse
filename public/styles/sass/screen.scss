@@ -1,0 +1,34 @@
+@import 'reset';
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+
+@import '../../node_modules/tether/dist/css/tether.css';
+@import '../../node_modules/bootstrap/scss/_variables.scss';
+@import '../../node_modules/bootstrap/scss/_mixins.scss';
+@import '../../node_modules/bootstrap/scss/_normalize.scss';
+@import '../../node_modules/bootstrap/scss/_reboot.scss';
+@import '../../node_modules/bootstrap/scss/_grid.scss';
+
+html, body{
+    margin: 0;
+    font-size: 16px;
+    font-family: 'Raleway', sans-serif; 
+    font-weight: 100;
+    color: #000;
+    background: #DDD;
+    background-attachment: fixed;
+    height: 100%;
+}
+
+[ng-cloak]{
+    display: none!important;
+}
+
+@import 'navigation';
+@import 'card';
+@import 'position';
+@import 'elements';
+@import 'images';
+@import 'text';
+@import 'animation';
+
+@import '../../node_modules/font-awesome/scss/font-awesome';

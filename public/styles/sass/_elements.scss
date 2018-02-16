@@ -1,0 +1,69 @@
+.page{
+    position:absolute; 
+    text-align:center;
+    top:2.5rem;
+    width:100%;
+    box-sizing: border-box;
+    padding-bottom: 4rem;
+    background: #DDD;
+}
+
+.container{
+    padding: 0 20px;
+    .col{
+        padding: 0 10px;
+    }    
+}
+
+.modal{
+    transition: .5s all ease-in-out;
+    z-index: 1;
+    top: 3rem;
+    position: absolute;
+    left: 0;
+    margin-bottom: 4rem;
+    &.ng-hide{
+        top: 100vh;
+    }
+
+    .card{
+        margin-bottom: 1rem;
+    }
+
+    video{
+        width: 100%;
+    }
+}
+
+.shade{
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: .5s all ease-in-out;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(50, 50, 50, .5);
+    opacity: 1;
+    overflow: scroll;
+    &.ng-hide{
+        opacity: 0;
+    }
+}
+
+.close-modal{
+    position: fixed;
+    right: 1rem;
+    bottom: 5rem;
+    text-align: center;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 5rem;
+    background: #FF5722;
+    color: #FFF;
+    font-size: 2rem;
+    z-index: 500;
+    box-shadow: 0 2px 5px rgba(50, 50, 50, .5);
+    i{
+        line-height: 4rem;
+    }
+}

@@ -1,0 +1,33 @@
+.page-title{
+    font-weight: bold;
+    text-align: center;
+    padding: .5rem;
+    background: #427cd3;
+    position: fixed;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 9999;
+    color: #FEFEFE;
+}
+.title-spacer{
+    height: 2.5rem;
+    width: 100%;
+}
+
+.section-heading{
+    width: 100%;
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin-top: .5rem;
+    text-align: center;
+}
+
+.text-right{
+    text-align: right!important;
+}
+
+p{
+    font-size: .75rem;
+    margin: 0 0 .5rem!important;
+    line-height: 1rem;
+}

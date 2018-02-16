@@ -1,0 +1,28 @@
+img{
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.fade-mask{
+    overflow: hidden;
+    text-align: center;
+    .fade-in{
+        margin: 0 auto;
+    }
+}
+
+.fade-in.ng-hide-add, .fade-in.ng-hide-remove {
+    transition: .5s all ease-in-out;
+    display: block !important;
+}
+
+.fade-in.ng-hide-add.ng-hide-add-active, .fade-in.ng-hide-remove {
+    opacity: 0;
+    filter: blur(20px);
+}
+
+.fade-in.ng-hide-add, .fade-in.ng-hide-remove.ng-hide-remove-active {
+    opacity: 1;
+    filter: blur(0);
+}

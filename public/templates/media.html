@@ -1,0 +1,64 @@
+<div ng-controller="mediaController as media"k>
+    <div class="container">
+
+        <div class="row">
+            <div class="section-heading">Chromecast</div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <img src="/images/latest.jpg">
+                    <div class="text-right">Playing: Downton Abbey - S07E13</div>
+                </div>
+            </div>            
+        </div>
+
+        <div class="row">
+            <div class="section-heading">Latest Movies</div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <img src="https://image.tmdb.org/t/p/w185/3jcNvhtVQe5Neoffdic39fRactM.jpg">
+                </div>                
+            </div>
+            <div class="col">
+                <div class="card">
+                    <img src="https://image.tmdb.org/t/p/w185/3jcNvhtVQe5Neoffdic39fRactM.jpg">
+                </div>                
+            </div>
+            <div class="col">
+                <div class="card">
+                    <img src="https://image.tmdb.org/t/p/w185/3jcNvhtVQe5Neoffdic39fRactM.jpg">
+                </div>                
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="section-heading">Latest Shows</div>
+        </div>
+        <div class="row">
+            <div class="col" ng-repeat="show in media.shows">
+                <div buzz class="card">
+                    <img ng-click="media.grow(show)" ng-src="{{show.fanart}}">
+                </div>
+            </div>
+        </div>        
+
+    </div>
+
+    <div ng-show="media.showModal" class="shade">        
+    </div>
+
+    <div ng-show="media.showModal" class="container modal">
+        <div class="row">
+            <div class="col">
+                <div buzz class="card" ng-click="media.grow(media.modal)">
+                    <img ng-src="{{media.modal.fanart}}">
+                    <div ng-bind="media.modal.showtitle + ' - ' + media.modal.name"></div>
+                    <p ng-bind="media.modal.description"></p>
+                </div>
+            </div>            
+        </div>
+    </div>
+</div>

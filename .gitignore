@@ -1,0 +1,9 @@
+node_modules
+.config.js
+/public/fonts
+/public/styles/screen.css
+/public/styles/screen.css.map
+/public/images/fanart/*.jpg
+/public/images/security/*.jpg
+/public/images/security/events/*.jpg
+/public/images/security/events/*.mp4

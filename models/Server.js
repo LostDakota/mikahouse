@@ -1,8 +1,12 @@
 'use strict'
 
+const MCTX = require('../components/MikaHouseContext')
+const CONFIG = require('../.config')
+
 let ping = require('ping')
 let os = require('os-utils')
 let diskspace = require('diskspace')
+let request = require('request')
 
 var format = (seconds) => {
     var sec = parseInt(seconds, 10)
@@ -25,22 +29,50 @@ var format = (seconds) => {
     return str.toString()
 }
 
-var driveSpace = (drivePath) => {
+var driveSpace = (driveLetter) => {
     return new Promise((resolve, reject) => {
-        diskspace.check((err, result) => {
-            if(err) reject('error')
-            resolve(result.used)
+        diskspace.check('/mnt/' + driveLetter, (err, result) => {
+            if(err) reject(err)
+            resolve({
+                letter: driveLetter.toUpperCase(),
+                used: Math.floor((result.used / result.total) * 100),
+                free: Math.floor((result.free / result.total) * 100)
+            })
         })
     })
 }
 
-var disks = (driveLetter) => {
-    diskspace.check(driveLetter, (err, result) => {
-        return result.used
-    })
-}
-
 module.exports = {
+    ListNetwork: () => {
+        return new Promise((resolve, reject) => {
+            MCTX.query('select ip, name, recorded from network', (err, rows, fields) => {
+                if(err) reject(err)
+                resolve(rows)
+            })
+        })
+    },
+    PollNetwork: () => {
+        return new Promise((resolve, reject) => {
+            request.get('http://' + CONFIG.ZoneMinder.Host + ':88', (err, response, body) => {
+                if(err) reject(err)
+                var devices = JSON.parse(body)
+                devices.forEach(device => {
+                    MCTX.query('insert into network (ip, mac) values ("' + device.ip + '", "' + device.mac + '") on duplicate key update recorded=values(recorded)', (err, rows, fields) => {
+                        if(err) reject(err)
+                    })
+                })
+                resolve(devices)
+            })
+        })
+    },
+    GetStats: () => {
+        return new Promise((resolve, reject) => {
+            MCTX.query('select * from server_stats', (err, rows, fields) => {
+                if(err) reject(err)
+                resolve(rows)
+            })
+        })
+    },
     Ping: (construct) => {
         return new Promise((resolve, reject) => {
             ping.promise.probe('google.com')
@@ -50,7 +82,7 @@ module.exports = {
                         Icon : "fa-wifi",
                         Value : res.avg
                     })
-                    resolve(res.avg)
+                    resolve({name: 'Ping', value: res.avg + 'ms'})
                 })
         })
     },
@@ -62,7 +94,7 @@ module.exports = {
                     Icon: 'fa-balance-scale',
                     Value : Math.floor(value * 100) + '%'
                 })
-                resolve(Math.floor(value * 100))
+                resolve({name: 'Load', value: Math.floor(value * 100) + '%'})
             })
         })
     },
@@ -73,15 +105,37 @@ module.exports = {
                 Icon: 'fa-desktop',
                 Value : format(process.uptime())
             })
-            resolve(format(process.uptime()))
+            resolve({name: 'Uptime', value: format(process.uptime())})
         })
     },
     DiskUsage: () => {
-        var diskObj = {}
         return new Promise((resolve, reject) => {
-            driveSpace('/mnt/c')
-                .then((used) => {
-                    resolve(used)
+            var drives = ['c', 'd', 'e']
+            var promises = []
+            drives.forEach(letter => {
+                promises.push(driveSpace(letter))
+            })
+            Promise.all(promises)
+                .then(results => {
+                    resolve(results)
+                })
+        })
+    },
+    RecordStats: () => {
+        return new Promise((resolve, reject) => {
+            var promises = [
+                module.exports.Ping(false),                
+                module.exports.Load(false),
+                module.exports.Uptime(false)
+            ]
+            Promise.all(promises)
+                .then(results => {
+                    results.forEach(stat => {
+                        MCTX.query('update server_stats set statistic="' + stat.value + '" where name="' + stat.name + '"', (err, rows, fields) => {
+                            if(err) reject(err)
+                        })
+                    })
+                    resolve('ok')
                 })
         })
     }

@@ -7,6 +7,7 @@ const ZCTX = require('../components/ZoneMinderContext')
 let request = require('request')
 let fs = require('fs')
 let Images = require('../services/Images')
+let Events = require('../models/Events')
 
 function cameras(){
     return new Promise((resolve, reject) => {
@@ -35,8 +36,8 @@ function buildEvent(eventId){
             var videoPath = ZM.Url + eventObj.Event.BasePath + 'Event-' + eventId + videoSuffix
 
             Promise.all([
-                Images.Save(videoPath, '/images/security/events/', eventId + '.mp4'),
-                Images.Save(imgPath, '/images/security/events/', eventId + '.jpg')
+                Images.Save(videoPath, '/images/security/events/', eventId + '.mp4', false),
+                Images.Save(imgPath, '/images/security/events/', eventId + '.jpg', false)
             ]).then(response => {
                 var search = (str, arr) => {
                     for (var i = 0; i < arr.length; i++){
@@ -52,16 +53,14 @@ function buildEvent(eventId){
     })
 }
 
-module.exports = {
-    Status: () => {
-        return new Promise((resolve, reject) => {
-            request.get(ZM.Api + 'host/daemonCheck.json', (err, response, body) => {
-                if(err) reject('error')
-                resolve(JSON.parse(body))
-            })
-        })
-    },
+function find(people, status){
+    people.find(person => {
+        return person.status === status
+    })
+}
 
+module.exports = {
+    
     TodaysEvents: () => {
         return new Promise((resolve, reject) => {
             ZCTX.query('select Id from Events where EndTime > curdate() order by EndTime desc', (err, rows, fields) => {
@@ -138,6 +137,15 @@ module.exports = {
         })
     },
 
+    Status: () => {
+        return new Promise((resolve, reject) => {
+            request.get(ZM.Api + 'host/daemonCheck.json', (err, response, body) => {
+                if(err) reject('error')
+                resolve(JSON.parse(body))
+            })
+        })
+    },
+
     ToggleState: () => {
         return new Promise((resolve, reject) => {
             module.exports.Status()
@@ -148,6 +156,32 @@ module.exports = {
                         resolve(reponse)
                     })
                 })
+        })
+    },
+
+    Auto: () => {
+        return new Promise((resolve, reject) => {           
+            var promises = []
+            MCTX.query('select name, status from tracker where device_id is not null', (err, rows, fields) => {
+                if(err) reject(err)
+                module.exports.Status()
+                    .then(res => {
+                        var status = res.result
+                        var equiv = status === 0 ? 'Away' : 'Home'
+                        var match = find(rows, equiv)
+                        if(match !== undefined){
+                            console.log(match)
+                            var action = equiv === 'Home' ? ' returned, disabling security' : ' left, enabling security'
+                            module.exports.ToggleState()
+                                .then(result => {
+                                    Events.SetEvent(match.name + action)
+                                        .then(r => {
+                                            resolve('ok')
+                                        })
+                                })
+                        }
+                    })
+            })
         })
     }
 }

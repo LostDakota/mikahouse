@@ -8,26 +8,29 @@ ul.main-navigation{
     text-align: center;
     margin: 0;
     z-index: 9999;
+    background: #DDD;
     box-shadow: -1px 0 10px rgba(100,100,100,.5);
     li{
         flex: 1;
-        padding: .5rem;
+        padding: .75rem .5rem .5rem;
         background: #DDD;
         &.active{
             background: #FFF;
-            a{
+            a, h6{
                 color: #FF5722;
             } 
         }
     }
     a{
         text-decoration: none;
-        color: #AAA;
+        color: #888;
+        font-size: 1.25rem;
         transition: 200ms all ease-in-out;               
     }
     h6{
         margin: 0;
-        font-size: .5rem;
+        font-size: .75rem;
+        color: #666
     }
 }
 

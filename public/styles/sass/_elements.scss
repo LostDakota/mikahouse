@@ -1,7 +1,11 @@
+.avatar-sm{
+    width: 100%;
+}
+
 .page{
     position:absolute; 
     text-align:center;
-    top:2.5rem;
+    top:2rem;
     width:100%;
     box-sizing: border-box;
     padding-bottom: 4rem;
@@ -65,5 +69,35 @@
     box-shadow: 0 2px 5px rgba(50, 50, 50, .5);
     i{
         line-height: 4rem;
+    }
+}
+
+.drive-container{
+    position: relative;
+    width: 100%;
+    border: 1px solid #DDD;
+    overflow: hidden;
+    background: #427cd3;
+    color: #FFF;
+    text-align: left;
+    margin-bottom: .25rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    &:last-of-type{
+        margin-bottom: 0;
+    }
+    .drive-name{
+        margin-left: .5rem;
+        z-index: 3;
+    }
+    .drive-percentage{
+        position: absolute;
+        right: .5rem;
+        z-index: 3;
+        font-weight: light;
+    }
+    .drive-space{
+        background-color: #FF5722;
+        z-index: 1;
     }
 }

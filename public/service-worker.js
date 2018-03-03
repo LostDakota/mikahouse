@@ -1,29 +1,28 @@
-var version = 'v2::';
+var version = 'v3::';
 var cacheName = 'mika.house';
 var filesToCache = [
     '/manifest.json',
-    '/styles/screen.css',
+    '/styles/screen.css?=1',
     '/scripts/app.js',
     '/scripts/controllers.js',
-    '/fonts/fontawesome-webfont.woff2?v=4.7.0',
-    '/node_modules/tether/dist/css/tether.css'
+    '/fonts/fontawesome-webfont.woff2?v=4.7.0'
 ];
 
 self.addEventListener("install", function(e) {
-  console.log('WORKER: install event in progress.');
+  // console.log('WORKER: install event in progress.');
   e.waitUntil(
     caches.open(version + cacheName)
       .then(function(cache) {
         return cache.addAll(filesToCache);
       })
       .then(function(){
-        console.log('WORKER: install completed.');
+        // console.log('WORKER: install completed.');
       })
   );
 });
 
 self.addEventListener("fetch", function(event){
-  console.log('WORKER: fetch event in progress.');
+  // console.log('WORKER: fetch event in progress.');
   if(event.request.method !== 'GET'){
     return;
   }
@@ -43,13 +42,13 @@ self.addEventListener("fetch", function(event){
               cache.put(event.request, cacheCopy);
             })
             .then(function(){
-              console.log('WORKER: fetch response stored in cache.', event.request.url);
+              // console.log('WORKER: fetch response stored in cache.', event.request.url);
             });
           return response;
         }
 
         function unableToResolve(){
-          console.log('WORKER: fetch request failed in both cache and network.');
+          // console.log('WORKER: fetch request failed in both cache and network.');
           return new Response('<h1>Service Unavailable</h1>', {
             status: 503,
             statusText: 'Service Unavailable',
@@ -63,7 +62,7 @@ self.addEventListener("fetch", function(event){
 });
 
 self.addEventListener("activate", function(event){
-  console.log('WORKER: activate event in progress.');
+  // console.log('WORKER: activate event in progress.');
   event.waitUntil(
     caches.keys()
       .then(function(keys){
@@ -77,7 +76,7 @@ self.addEventListener("activate", function(event){
         )
       })
       .then(function(){
-        console.log('WORKER: activate complete.');
+        // console.log('WORKER: activate complete.');
       })
   );
 });

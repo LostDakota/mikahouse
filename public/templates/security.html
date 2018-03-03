@@ -5,13 +5,13 @@
         <div class="col">
             <div buzz class="card">
                 <i buzz id="toggle-security" ng-class="{'fa-ban' : security.status.result == 0, 'fa-video-camera' : security.status.result == 1}" class="fa fa-fw big-icon" ng-click="security.toggle()"></i>
-                <div ng-bind="security.status.result == 1 ? 'System is Active' : 'System is Disabled'"></div>
+                <div class="card-text" ng-bind="security.status.result == 1 ? 'System is Active' : 'System is Disabled'"></div>
             </div>
         </div>
         <div class="col">
             <div buzz class="card" ng-click="security.showModal = !security.showModal">
                 <i class="fa fa-fw fa-film big-icon"></i>
-                <div ng-bind="security.todayseventcount + ' Events'"></div>
+                <div class="card-text" ng-bind="security.todayseventcount + ' Events'"></div>
             </div>
         </div>
     </div>
@@ -39,7 +39,7 @@
 
         <div ng-show="security.showModal" class="container modal">
             <div class="row">
-                <div class="col">
+                <div class="col-12">
                     <div buzz class="card" ng-repeat="event in security.events">
                         <video controls poster="{{event.poster}}" preload="none">
                             <source ng-src="{{event.video}}" type="video/mp4">

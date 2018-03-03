@@ -16,9 +16,9 @@
 
 .section-heading{
     width: 100%;
-    font-weight: bold;
+    font-weight: normal;
     font-size: 1.1rem;
-    margin-top: .5rem;
+    margin: .5rem 0;
     text-align: center;
 }
 
@@ -26,8 +26,17 @@
     text-align: right!important;
 }
 
+.text-left{
+    text-align: left;
+}
+
 p{
     font-size: .75rem;
-    margin: 0 0 .5rem!important;
+    margin: 0;
     line-height: 1rem;
+}
+.card-text{
+    margin: .25rem 0;
+    font-size: .75rem;
+    line-height: .75rem;
 }

@@ -3,7 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title ng-bind="app.title"></title>
+        <title ng-bind="title"></title>
+        <base href="/" />
         <meta name="description" content="MikaHouse Automation">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#427cd3">
@@ -15,19 +16,18 @@
         <script src="../node_modules/angular/angular.min.js" inline></script>
         <script src="../node_modules/angular-route/angular-route.min.js" inline></script>
         <script src="../node_modules/angular-animate/angular-animate.min.js" inline></script>
-
-        <base href="/" />
     </head>
     <body>
         <!--[if lte IE 9]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
         <![endif]-->
+        <noscript>Please enable javascript.</noscript>
 
         <div class="page-title" ng-bind="title"></div>
         <div class="title-spacer"></div>
         <ng-view class="page" ng-cloak></ng-view>
 
-        <div ng-controller="navController as nav">
+        <div ng-controller="navController as nav" ng-cloak>
             <ul class="main-navigation">
                 <li buzz ng-repeat="item in nav.items" ng-class="{'active': title === item.title}">
                     <a href="{{item.link}}" ng-class="{'active': title === item.title}">
@@ -41,9 +41,10 @@
         <div class="nav-spacer"></div>
 
         <script src="../node_modules/jquery/dist/jquery.min.js" inline></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
         <script src="../scripts/app.js"></script>
         <script src="../scripts/controllers.js"></script>
-        <script src="../node_modules/tether/dist/js/tether.min.js" inline></script>
+        <!-- <script src="../node_modules/tether/dist/js/tether.min.js" inline></script> -->
         <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js" inline></script>        
     </body>
 </html>

@@ -108,9 +108,16 @@ app.controller('securityController', function($http){
 app.controller('servicesController', function($http){
     var self = this;
     self.server = {};
+    self.drives = {};
+
     $http.get('/api/server')
         .then(function(response){
             self.server = response.data;
+        });
+
+    $http.get('/api/server/drives')
+        .then(function(response){
+            self.drives = response.data;
         });
 });
 
@@ -118,6 +125,19 @@ app.controller('climateController', function($http){
 
 })
 
-app.controller('notificationController', function($http){
+app.controller('eventController', function($http){
+    var self = this;
+    self.items = {}
 
+    $http.get('/api/events')
+        .then(function(response){
+            self.items = response.data
+        })
 })
+
+app.filter('normalizeTime', function(){
+    return function(timestamp){
+        var date = new Date(timestamp);
+        return(moment.unix(timestamp).format("dddd, MMMM Do YYYY h:mm a"));
+    }
+});

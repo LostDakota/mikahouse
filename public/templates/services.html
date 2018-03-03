@@ -7,8 +7,27 @@
             </div>
             <div class="col" ng-repeat="stat in services.server">
                 <div class="card">
-                    <i class="fa fa-fw big-icon" ng-class="stat.Icon"></i>
-                    <div ng-bind="stat.Name + ': ' + stat.Value"></div>
+                    <i class="fa fa-fw big-icon" ng-class="stat.icon"></i>
+                    <div class="card-text">
+                        {{stat.name + ': '}}<br>
+                        {{stat.statistic}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="section-heading">
+                Disk Usage
+            </div>
+            <div class="col">
+                <div class="card">
+                    <div ng-repeat="drive in services.drives" class="drive-container">                        
+                        <div class="drive-percentage">{{drive.free}}%</div>
+                        <div class="drive-space" ng-style="{'width': drive.used + '%'}">
+                            <div class="drive-name">{{drive.letter}}:</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

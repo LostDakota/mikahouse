@@ -33,13 +33,17 @@ APP.get('/api/server/drives', (req, res) => {
 })
 
 APP.get('/api/server', (req, res) => {
-    Promise.all([
-        Server.Ping(true),
-        Server.Load(true),
-        Server.Uptime(true)
-    ]).then(result => {
-        res.json(result)
-    })
+    Server.GetStats()
+        .then(response => {
+            res.json(response)
+        })
+})
+
+APP.get('/api/server/network', (req, res) => {
+    Server.ListNetwork()
+        .then(response => {
+            res.json(response)
+        })
 })
 
 module.exports = APP

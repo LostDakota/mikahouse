@@ -31,14 +31,34 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
         index: 6,
         templateUrl: '/templates/climate.html'
     })
-    .when('/notifications', {
-        title: 'Notifications',
+    .when('/events', {
+        title: 'Events',
         index: 7,
-        templateUrl: '/templates/notifications.html'
+        templateUrl: '/templates/events.html'
     });
 
     $locationProvider.html5Mode(true);
 }]);
+
+app.config(function ($httpProvider) {
+    $httpProvider.interceptors.push('responseObserver');
+})
+
+app.factory('responseObserver', function responseObserver($q, $window) {
+    return {
+        'responseError': function(errorResponse) {
+            switch (errorResponse.status) {
+            case 403:
+                $window.location = '/login';
+                break;
+            case 500:
+                $window.location = './500.html';
+                break;
+            }
+            return $q.reject(errorResponse);
+        }
+    };
+});
 
 app.controller('navController', function(){
     var self = this;
@@ -50,7 +70,7 @@ app.controller('navController', function(){
         {title: 'Security', icon: 'fa-video-camera', link: '/security'},
         {title: 'Services', icon: 'fa-database', link: '/services'},
         {title: 'Climate', icon: 'fa-sun-o', link: '/climate'},
-        {title: 'Notifications', icon: 'fa-comment', link: '/notifications'}
+        {title: 'Events', icon: 'fa-exclamation-circle', link: '/events'}
     ]
 });
 
@@ -84,15 +104,10 @@ app.run(['$rootScope', function($rootScope){
     });
 }]);
 
-// $('.main-navigation, .buzz').on("click", function(e){
-//     console.log('click fired');
-//     window.navigator.vibrate(50);
-// });
-
-// if ('serviceWorker' in navigator && 'PushManager' in window) {
-//     navigator.serviceWorker
-//         .register('./service-worker.js')
-//         .then(function() { 
-//             console.log('Service Worker Registered');
-//         });
-// }
+if ('serviceWorker' in navigator && 'PushManager' in window) {
+    navigator.serviceWorker
+        .register('service-worker.js')
+        .then(function() { 
+            // console.log('Service Worker Registered');
+        });
+}

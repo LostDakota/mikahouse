@@ -1,6 +1,7 @@
 var gulp = require('gulp')
 var sass = require('gulp-sass')
 var inline = require('gulp-inline-source')
+var htmlmin = require('gulp-htmlmin')
 
 gulp.task('inlinesources', () => {
     var inlineOpts = {
@@ -8,6 +9,7 @@ gulp.task('inlinesources', () => {
     }
     return gulp.src(__dirname + '/public/src/index.html')
         .pipe(inline(), inlineOpts)
+        .pipe(htmlmin({collapseWhitespace: true}))
         .pipe(gulp.dest(__dirname + '/public/'))
 })
 

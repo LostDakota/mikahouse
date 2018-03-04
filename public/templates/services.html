@@ -32,5 +32,38 @@
             </div>
         </div>
 
+        <div class="row">
+                <div class="section-heading">
+                    Connected Device
+                </div>
+                <div class="col">
+                    <div class="card">
+                        <div style="display:flex; font-weight: bold;padding-bottom: .25rem; margin-bottom: .25rem;border-bottom:1px solid #AAA;">
+                            <div class="col text-left" style="flex:2">
+                                Name
+                            </div>
+                            <div class="col-2 text-left" style="flex:1">
+                                Ip
+                            </div>
+                            <div class="col text-left" style="flex:2">
+                                Last Connection
+                            </div>
+                        </div> 
+                        <div style="display:flex" ng-repeat="device in services.devices">
+                            <div class="col text-left" style="flex:2">
+                                <span style="color:#427cd3">{{device.name}}</span>
+                                <span ng-if="!device.name" style="color:#FF5722">Unknown Device!</span>
+                            </div>
+                            <div class="col-2 text-left" style="flex:1">
+                                {{device.ip.split('.')[3]}}
+                            </div>
+                            <div class="col text-left" style="flex:2">
+                                {{device.date | fromNow}}
+                            </div>
+                        </div>                
+                    </div>
+                </div>
+            </div>
+
     </div>
 </div>

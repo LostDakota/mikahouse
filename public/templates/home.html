@@ -58,7 +58,16 @@
             <div class="section-heading">Recent Activity</div>
         </div>
         <div class="row">
-            <div class="col">
+            <div ng-repeat="event in home.events" class="col">
+                <div class="card">
+                    <i class="fa fa-fw big-icon" ng-class="{'fa-sign-in' : event.notif.indexOf('returned') != -1, 'fa-sign-out' : event.notif.indexOf('left') != -1}"></i>
+                    <div class="card-text">
+                        {{event.notif.split(',')[0].split('.')[0]}}<br>
+                        {{event.date | fromNow}}
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col">
                 <div class="card">
                     <i class="fa fa-fw fa-sign-in big-icon"></i>
                     <div class="card-text">Drew came home: 6:55pm</div>
@@ -75,7 +84,7 @@
                     <i class="fa fa-fw fa-arrow-circle-down big-icon"></i>
                     <div class="card-text">Garage Door Closed: 10:30am</div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>

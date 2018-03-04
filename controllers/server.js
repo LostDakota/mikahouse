@@ -46,4 +46,11 @@ APP.get('/api/server/network', (req, res) => {
         })
 })
 
+APP.get('/api/server/connecteddevices', (req, res) => {
+    Server.ConnectedDevices()
+        .then(response => {
+            res.json(response)
+        })
+})
+
 module.exports = APP

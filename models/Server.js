@@ -43,9 +43,17 @@ var driveSpace = (driveLetter) => {
 }
 
 module.exports = {
+    ConnectedDevices: () => {
+        return new Promise((resolve, reject) => {
+            MCTX.query('select ip, name, UNIX_TIMESTAMP(recorded) as date from network where recorded > now() - interval 1 minute', (err, rows, fields) => {
+                if(err) reject(err)
+                resolve(rows)
+            })
+        })
+    },
     ListNetwork: () => {
         return new Promise((resolve, reject) => {
-            MCTX.query('select ip, name, recorded from network', (err, rows, fields) => {
+            MCTX.query('select ip, name, UNIX_TIMESTAMP(recorded) as date from network order by date desc', (err, rows, fields) => {
                 if(err) reject(err)
                 resolve(rows)
             })

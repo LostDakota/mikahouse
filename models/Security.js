@@ -54,6 +54,7 @@ function buildEvent(eventId){
 }
 
 function find(people, status){
+    console.log('people: ' + people)
     people.find(person => {
         return person.status === status
     })
@@ -157,27 +158,41 @@ module.exports = {
                     })
                 })
         })
-    },
+    },    
 
     Auto: () => {
-        return new Promise((resolve, reject) => {           
-            var promises = []
-            MCTX.query('select name, status from tracker where device_id is not null', (err, rows, fields) => {
+        return new Promise((resolve, reject) => {
+            MCTX.query('select name, status, last_seen from tracker where device_id is not null', (err, rows, fields) => {
                 if(err) reject(err)
                 module.exports.Status()
                     .then(res => {
                         var status = res.result
                         var equiv = status === 0 ? 'Away' : 'Home'
-                        var match = find(rows, equiv)
-                        if(match !== undefined){
-                            console.log(match)
-                            var action = equiv === 'Home' ? ' returned, disabling security' : ' left, enabling security'
+
+                        var matches = rows.filter(person => person.status === equiv)
+                        var match = rows.find(person => person.status === equiv)
+                        
+                        if(status === 1 && match != null){
+
                             module.exports.ToggleState()
-                                .then(result => {
-                                    Events.SetEvent(match.name + action)
-                                        .then(r => {
-                                            resolve('ok')
-                                        })
+                                .then(returnedState => {
+                                    Events.SetEvent(match.name + ' returned. Disabling security.')
+                                })
+                        }else if(status === 0 && matches.length === 2){
+                            function sortDates(a, b){
+                                return a.last_seen.getTime() - b.last_seen.getTime()
+                            }
+
+                            rows.forEach(person => {
+                                person.last_seen = new Date(person.last_seen)
+                            })
+
+                            var sorted = rows.sort(sortDates);
+                            var last = sorted[sorted.length - 1]
+
+                            module.exports.ToggleState()
+                                .then(returnedState => {
+                                    Events.SetEvent(last.name + ' left. Enabling security.')
                                 })
                         }
                     })

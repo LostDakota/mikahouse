@@ -14,10 +14,9 @@ let RecordChange = (action) => {
 let RecordOccupancy = (username, isHome) => {
     return new Promise((resolve, reject) => {        
         var status = isHome ? 'Home' : 'Away'
-        var state = isHome ? 'returned' : 'left'
         MCTX.query('select * from tracker where name="' + username + '"', (err, rows, fields) => {
             if(status != rows[0].status){
-                MCTX.query('update tracker set status="' + status + '" where name="' + username + '"', (err, rows, fields) => {
+                MCTX.query('update tracker set status="' + status + '", last_seen=NOW() where name="' + username + '"', (err, rows, fields) => {
                     if(err) reject('error')
                     resolve(rows)
                 })
@@ -82,7 +81,7 @@ module.exports = {
                     }
                     var average = Math.round(total / rows.length)
                     var perc = average > 100 ? 100 : average
-                    var truth = perc > 67 ? true : false
+                    var truth = perc >= 67 ? true : false
                     RecordOccupancy(username, truth)
                         .then(result => {
                             resolve(result)

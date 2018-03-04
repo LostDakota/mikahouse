@@ -3,6 +3,7 @@ app.controller('homeController', function($http){
     self.people = {};
     self.server = {};
     self.event = {};
+    self.events = {}
     self.newestshow = {};
 
     $http.get('/api/security/lastevent')
@@ -23,6 +24,11 @@ app.controller('homeController', function($http){
     $http.get('/api/media/newest/true')
         .then(function(response){
             self.newestshow = response.data;
+        });
+
+    $http.get('/api/events/3')
+        .then(function(response){
+            self.events = response.data
         });
 });
 
@@ -109,6 +115,7 @@ app.controller('servicesController', function($http){
     var self = this;
     self.server = {};
     self.drives = {};
+    self.devices = {};
 
     $http.get('/api/server')
         .then(function(response){
@@ -118,6 +125,11 @@ app.controller('servicesController', function($http){
     $http.get('/api/server/drives')
         .then(function(response){
             self.drives = response.data;
+        });
+
+    $http.get('/api/server/network')
+        .then(function(response){
+            self.devices = response.data;
         });
 });
 
@@ -139,5 +151,11 @@ app.filter('normalizeTime', function(){
     return function(timestamp){
         var date = new Date(timestamp);
         return(moment.unix(timestamp).format("dddd, MMMM Do YYYY h:mm a"));
+    }
+});
+
+app.filter('fromNow', function(){
+    return function(timestamp){
+        return(moment.unix(timestamp).fromNow());
     }
 });

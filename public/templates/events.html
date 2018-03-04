@@ -1,0 +1,16 @@
+<div ng-controller="eventController as events">
+    <div class="container">
+        <div class="row">
+            <div class="section-heading">Recent Events</div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card m-1y-bottom" ng-repeat="event in events.items">
+                    <img class="avatar-sm left" ng-src="{{'/images/' + event.image + '.webp'}}">
+                    <h3 class="text-left" ng-bind="event.notif"></h3>
+                    <p class="text-left">{{event.date | normalizeTime}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

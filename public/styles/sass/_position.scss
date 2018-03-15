@@ -5,3 +5,13 @@
 .left{
     float: left;
 }
+
+.right{
+    float: right;
+}
+
+.top-right{
+    position: absolute;
+    top: .5rem;
+    right: 0;
+}

@@ -1,4 +1,4 @@
-var version = 'v3::';
+var version = 'v5::';
 var cacheName = 'mika.house';
 var filesToCache = [
     '/manifest.json',
@@ -16,7 +16,7 @@ self.addEventListener("install", function(e) {
         return cache.addAll(filesToCache);
       })
       .then(function(){
-        // console.log('WORKER: install completed.');
+        // do stuff
       })
   );
 });
@@ -76,7 +76,7 @@ self.addEventListener("activate", function(event){
         )
       })
       .then(function(){
-        // console.log('WORKER: activate complete.');
+        // stuff
       })
   );
 });

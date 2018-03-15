@@ -35,10 +35,18 @@
         </div>
     </div>
 
-    <div ng-show="security.showModal" class="shade" ng-click="security.showModal = !security.showModal">        
+    <div ng-show="security.showModal" class="shade" ng-click="security.showModal = !security.showModal"></div>
 
-        <div ng-show="security.showModal" class="container modal">
+        <div ng-show="security.showModal" class="container modal">            
             <div class="row">
+
+                <div class="col-12">
+                    <select id="day-select" style="width: 100%; z-index: 9999" name="day" ng-change="security.getDay(security.selected)" ng-model="security.selected">
+                        <option value="" hidden>Showing Today's Events</option>
+                        <option ng-repeat="day in security.days" value="{{day.day}}">{{day.day | date}}</option>
+                    </select>
+                </div>
+
                 <div class="col-12">
                     <div buzz class="card" ng-repeat="event in security.events">
                         <video controls poster="{{event.poster}}" preload="none">
@@ -49,10 +57,15 @@
             </div>
         </div>
 
-    </div>
-
-    <div ng-show="security.showModal" class="close-modal">
-        <i class="fa fa-fw fa-close" ng-click="security.showModal = !security.showModal"></i>
-    </div>
+        <div ng-show="security.showModal" class="close-modal">
+            <i class="fa fa-fw fa-close" ng-click="security.showModal = !security.showModal"></i>
+        </div>
 
 </div>
+
+
+<script>
+    $('#day-select').click(function(event){
+        console.log(event.target);
+    })
+</script>

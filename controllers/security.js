@@ -9,8 +9,8 @@ APP.get('/api/security/lastevent', (req, res) => {
         })
 })
 
-APP.get('/api/security/todaysevents', (req, res) => {
-    Security.TodaysEvents()
+APP.get('/api/security/todaysevents/:day', (req, res) => {
+    Security.TodaysEvents(req.params.day)
         .then(response => {
             res.json(response)
         })
@@ -18,6 +18,13 @@ APP.get('/api/security/todaysevents', (req, res) => {
 
 APP.get('/api/security/todayseventcount', (req, res) => {
     Security.TodaysEventCount()
+        .then(response => {
+            res.json(response)
+        })
+})
+
+APP.get('/api/security/days', (req, res) => {
+    Security.DaysWithEvents()
         .then(response => {
             res.json(response)
         })

@@ -64,7 +64,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             MCTX.query('select o.is_home, u.ip_address from occupancy o join users u on o.username = u.username where o.username="' + username + '" order by o.id desc limit 3', (err, rows, fields) => {
                 if(err) reject(err)
-                MCTX.query('select recorded from network where ip="' + rows[0].ip_address + '" and recorded > now() - interval 1 minute', (err, row, fields) => {
+                MCTX.query('select recorded from network where ip="' + rows[0].ip_address + '" and recorded >= now() - interval 2 minute', (err, row, fields) => {
                     if(err) reject(err)
                     var total = 0;
                     var init = 150;

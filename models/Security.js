@@ -36,7 +36,7 @@ function buildEvent(eventId){
             var videoPath = ZM.Url + eventObj.Event.BasePath + 'Event-' + eventId + videoSuffix
 
             Promise.all([
-                Images.Save(videoPath, '/images/security/events/', eventId + '.mp4', false),
+                Images.Save(videoPath, '/images/security/events/', eventId + '.mp4', true),
                 Images.Save(imgPath, '/images/security/events/', eventId + '.jpg', false)
             ]).then(response => {
                 var search = (str, arr) => {
@@ -61,11 +61,21 @@ function find(people, status){
 }
 
 module.exports = {
-    
-    TodaysEvents: () => {
+    DaysWithEvents: () => {
         return new Promise((resolve, reject) => {
-            ZCTX.query('select Id from Events where EndTime > curdate() order by EndTime desc', (err, rows, fields) => {
-                if(err) reject('error')
+            ZCTX.query('select date(`EndTime`) as day from Events group by date(`EndTime`) order by day desc', (err, rows, fields) => {
+                if(err) reject(err)
+                resolve(rows)
+            })
+        })
+    },
+    
+    TodaysEvents: (day) => {
+        return new Promise((resolve, reject) => {
+            var date = new Date()
+            var selectedDay = day === "undefined" ? date.toLocaleDateString() : day.split('T')[0]
+            ZCTX.query('select Id from Events where date(EndTime) = "' + selectedDay + '" order by EndTime desc', (err, rows, fields) => {
+                if(err) reject(err)
                 var promises = []
                 rows.forEach(element => {
                     promises.push(buildEvent(element.Id))                    

@@ -67,18 +67,29 @@ app.controller('securityController', function($http){
     self.cam2 = '';
     self.event = {};
     self.showModal = false;
-
-    $http.get('/api/security/todayseventcount')
-        .then(function(response){
-            self.todayseventcount = response.data;
-        })
+    self.days = {};
+    self.selected = undefined;
 
     function status(){
         $http.get('/api/security/status')
         .then(function(response){
             self.status = response.data;
-        })
-    }        
+        });
+    }
+
+    self.getDay = function(day){
+        $http.get('/api/security/todaysevents/' + day)
+            .then(function(response){
+                self.events = response.data;
+            });
+    }
+
+    self.getDay();
+
+    $http.get('/api/security/todayseventcount')
+        .then(function(response){
+            self.todayseventcount = response.data;
+        })    
 
     $http.get('/api/security/camera/1')
         .then(function(response){
@@ -90,9 +101,9 @@ app.controller('securityController', function($http){
             self.cam2 = response.data;
         });
 
-    $http.get('/api/security/todaysevents')
+    $http.get('/api/security/days')
         .then(function(response){
-            self.events = response.data;
+            self.days = response.data;
         });
 
     self.toggle = function(){

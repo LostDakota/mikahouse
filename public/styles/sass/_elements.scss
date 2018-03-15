@@ -17,8 +17,8 @@
 
 .modal{
     transition: .5s all ease-in-out;
-    z-index: 1;
-    top: 3rem;
+    z-index: 100;
+    top: 1rem;
     position: absolute;
     left: 0;
     margin-bottom: 4rem;
@@ -33,6 +33,9 @@
     video{
         width: 100%;
     }
+    select{
+        margin-bottom: 1rem;
+    }
 }
 
 .shade{
@@ -45,6 +48,7 @@
     background-color: rgba(50, 50, 50, .5);
     opacity: 1;
     overflow: scroll;
+    z-index: 50;
     &.ng-hide{
         opacity: 0;
     }
@@ -96,4 +100,12 @@
         background-color: #FF5722;
         z-index: 1;
     }
+}
+
+select{
+    border: none;
+    border-radius: 3px;
+    background-color: #FFF;
+    padding: 5px;
+    text-align: center;
 }

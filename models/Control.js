@@ -1,5 +1,3 @@
-'use strict'
-
 const GARAGE = require('../.config').Garage
 
 let request = require('request')

@@ -1,10 +1,15 @@
 'use strict'
 
 const SICKRAGE = require('../.config').SickRage
+const PLEX = require('../.config').Plex
+const MCTX = require('../components/MikaHouseContext')
 
 let request = require('request')
 let fs = require('fs')
+let PlexAPI = require('plex-api')
 let Images = require('../services/Images')
+
+var client = new PlexAPI(PLEX);
 
 var buildShows = (showObj) => {
     return new Promise((resolve, reject) => {
@@ -21,6 +26,22 @@ var buildShows = (showObj) => {
                 })
             })
         })
+}
+
+var buildMovies = (moviesObj) => {
+    return new Promise((resolve, reject) => {
+        client.query(moviesObj.thumb).then(function(image){
+            var file = __dirname + '/../public/images/thumbs/' + moviesObj.ratingKey + '.jpg'
+            fs.writeFile(file, new Buffer(image), err => {
+                if(!err){
+                    moviesObj.thumb = '/images/thumbs/' +moviesObj.ratingKey + '.jpg'
+                    resolve(moviesObj)
+                }else{
+                    reject(err)
+                }
+            })
+        })
+    })
 }
 
 module.exports = {
@@ -42,6 +63,48 @@ module.exports = {
                     })                
                 }                
             })
+        })
+    },
+    Movies: () => {
+        return new Promise((resolve, reject) => {
+            var promises = []
+            client.query('/library/sections/2/recentlyAdded?X-Plex-Container-Start=0&amp;X-Plex-Container-Size=3')
+                .then(function(dirs){
+                    var three = dirs.MediaContainer.Metadata.slice(0,3)
+                    three.forEach(movie => {
+                        promises.push(buildMovies(movie))
+                    })
+                    Promise.all(promises)
+                        .then(response => {
+                            resolve(response)
+                        })
+                }, function(err){
+                    reject(err)
+                })
+        })
+    },
+
+    NowPlaying: () => {
+        return new Promise((resolve, reject) => {
+            client.query('/status/sessions')
+                .then(response => {
+                    if(response.MediaContainer.size === 1){
+                        var file = __dirname + '/../public/images/art/' + response.MediaContainer.Metadata[0].ratingKey + '.jpg'
+                        client.query(response.MediaContainer.Metadata[0].art)
+                            .then(image => {
+                                fs.writeFile(file, new Buffer(image), err => {
+                                    if(!err){
+                                        response.MediaContainer.Metadata[0].art = '/images/art/' + response.MediaContainer.Metadata[0].ratingKey + '.jpg'
+                                        resolve(response)
+                                    }
+                                })
+                            })
+                    }else{
+                        resolve(response)
+                    }
+                }, err => {
+                    reject(err)
+                })
         })
     }
 }

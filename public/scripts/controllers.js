@@ -1,3 +1,5 @@
+var timeout = null;
+
 app.controller('homeController', function($http){
     var self = this;
     self.people = {};
@@ -35,6 +37,8 @@ app.controller('homeController', function($http){
 app.controller('mediaController', function($http){
     var self = this;
     self.shows = {};
+    self.movies = {};
+    self.playing = {};
     self.modal = null;
     self.showModal = false;
 
@@ -43,19 +47,72 @@ app.controller('mediaController', function($http){
         self.modal = show;
     }
 
+    $http.get('/api/media/movies')
+        .then(function(response){
+            self.movies = response.data;
+        });
+
     $http.get('/api/media/newest')
         .then(function(response){
             self.shows = response.data;
+        });
+
+    $http.get('/api/media/nowplaying')
+        .then(function(response){
+            self.playing = response.data.MediaContainer;
         });
 });
 
 app.controller('controlsController', function($http){
     var self = this;
+    self.thermostat = {};
+    self.range = new Array(50)
+    self.timeout = null;
+
+    $http.get('/api/climate/thermostat')
+        .then(function(response){
+            self.thermostat = response.data;
+            self.setNeedle();
+            self.setCurrent();
+        });
+
+    self.change = function(degree){
+        self.thermostat.target += degree;
+        self.setNeedle();
+        if(self.timeout !== null){
+            window.clearTimeout(self.timeout) = null
+        }
+        self.timeout = window.setTimeout(function(){
+            $http.post('/api/climate/thermostat/' + self.thermostat.target)
+                .then(function(response){
+                    console.log(response.data);
+                });
+        }, 10000);
+    }
+
+    self.setCurrent = function(){
+        var current = jQuery('.current');
+        var put = 50 + ((self.thermostat.current - 70) * 5);
+        current.css({
+            left: put + '%'
+        });
+    }
+    
+    self.setNeedle = function(){
+        var needle = jQuery('.needle');
+        var half = 70;
+        var current  = self.thermostat.target;
+        var set = 50 + ((current - half) * 5)
+        needle.css({
+            left: set + '%'
+        })
+    }
+
     self.garage = function(){
         $http.get('/api/control/garage')
             .then(function(response){
                 
-            })
+            });
     }
 });
 
@@ -145,7 +202,13 @@ app.controller('servicesController', function($http){
 });
 
 app.controller('climateController', function($http){
+    var self = this;
+    var thermostat = {};
 
+    $http.get('/api/climate/thermostat')
+        .then(response => {
+            self.thermostat = response.data
+        })
 })
 
 app.controller('eventController', function($http){
@@ -156,6 +219,13 @@ app.controller('eventController', function($http){
         .then(function(response){
             self.items = response.data
         })
+})
+
+app.filter('fromTimestamp', function(){
+    return function(timestamp){
+        var date = moment(timestamp).format("dddd, MMMM Do YYYY h:mm a");
+        return(date);
+    }
 })
 
 app.filter('normalizeTime', function(){

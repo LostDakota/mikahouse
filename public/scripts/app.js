@@ -69,7 +69,7 @@ app.controller('navController', function(){
         {title: 'Controls', icon: 'fa-lightbulb-o', link: '/controls'},
         {title: 'Security', icon: 'fa-video-camera', link: '/security'},
         {title: 'Services', icon: 'fa-database', link: '/services'},
-        {title: 'Climate', icon: 'fa-sun-o', link: '/climate'},
+        // {title: 'Climate', icon: 'fa-sun-o', link: '/climate'},
         {title: 'Events', icon: 'fa-exclamation-circle', link: '/events'}
     ]
 });

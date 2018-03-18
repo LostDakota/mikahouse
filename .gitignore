@@ -7,3 +7,5 @@ node_modules
 /public/images/security/*.jpg
 /public/images/security/events/*.jpg
 /public/images/security/events/*.mp4
+/public/images/art/
+/public/images/thumbs/

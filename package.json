@@ -27,7 +27,9 @@
     "momentjs": "^2.0.0",
     "mysql": "^2.15.0",
     "os-utils": "0.0.14",
-    "ping": "^0.2.2"
+    "ping": "^0.2.2",
+    "plex-api": "^5.2.0",
+    "unofficial-nest-api": "^0.1.4"
   },
   "devDependencies": {},
   "scripts": {

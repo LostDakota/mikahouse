@@ -22,7 +22,7 @@
                     <div class="fade-mask">
                         <img class="fade-in" fade-in src="/images/security/last.jpg" ng-src="{{home.event.image}}">
                     </div>                    
-                    <div class="text-right card-text" ng-bind="home.event.time"></div>
+                    <div class="text-right card-text">{{home.event.time | fromTimestamp}}</div>
                 </div>                
             </div>
         </div>

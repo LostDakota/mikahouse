@@ -1,6 +1,31 @@
 <div class="container" ng-controller="controlsController as controls">
 
     <div class="row">
+        <div class="section-heading">Thermostat</div>
+        <div class="col">
+            <div class="card">
+                <div style="display:flex; margin-top:1rem;">
+                    <div ng-click="controls.change(-1)" style="flex:1" buzz>
+                        <i class="fa fa-fw fa-minus-circle fa-2x temperature-control"></i>
+                    </div>
+                    <div class="thermostat" ng-class="{'heating' : controls.thermostat.target > controls.thermostat.current}">
+                        <div class="needle"></div>
+                        <div class="current"></div>
+                        <div class="ticks" ng-repeat="i in controls.range track by $index">
+                            <div class="tick"></div>
+                        </div>
+                    </div>
+                    <div ng-click="controls.change(1)" style="flex:1" buzz>
+                        <i class="fa fa-fw fa-plus-circle fa-2x temperature-control"></i>
+                    </div>
+                </div>
+                <div class="card-text">Set to: {{controls.thermostat.target}}&deg; - Current: {{controls.thermostat.current}}&deg;</div>
+                <div>{{controls.thermostat.away ? 'Away' : 'Home'}}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
         <div class="section-heading">Doors</div>
         <div class="col col-xs-6">
             <div buzz class="card" ng-click="controls.garage()">

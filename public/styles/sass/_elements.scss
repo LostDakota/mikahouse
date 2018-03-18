@@ -106,6 +106,56 @@ select{
     border: none;
     border-radius: 3px;
     background-color: #FFF;
-    padding: 5px;
+    padding: .5rem;
+    font-size: 1.25rem;
     text-align: center;
+}
+
+.thermostat{
+    box-shadow: 0 2px 5px #AAA inset;
+    height: 2rem;
+    display: flex;
+    justify-content: center;   
+    border-radius: 2px;
+    flex: 8;
+    position: relative;
+    .ticks{
+        text-align: center;
+        flex: 1;
+        height: 2rem;
+        .tick{
+            content: '';
+            width: 1px;
+            height: 2rem;
+            background: linear-gradient(#AAA, #DDD);
+        }        
+    }
+    .needle, .current{
+        left: 0;
+        width: 3px;
+        z-index: 50;
+        height: 2rem;
+        background: $orange;
+        position: absolute;
+        top: 0;
+        transition: .5s ease-in-out;
+    }
+    .current{
+        background: linear-gradient(#AAA, #DDD) !important;
+        z-index: 40 !important;
+    }
+}
+
+.heating{
+    background: $orange;
+    .needle, .current{        
+        width: 5px;
+    }
+    .needle{
+        background: #FFF;
+    }
+}
+
+.temperature-control{
+    color: #AAA;
 }

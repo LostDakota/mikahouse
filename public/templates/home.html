@@ -8,7 +8,7 @@
             <div class="col" ng-repeat="person in home.people">
                 <div class="card">
                     <img ng-src="{{person.image}}">
-                    <div class="card-text" ng-bind="person.name + ' - ' + person.status"></div>
+                    <div class="card-text">{{person.name}} - {{person.status}}</div>
                 </div>
             </div>
         </div>

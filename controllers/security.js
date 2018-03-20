@@ -40,7 +40,7 @@ APP.get('/api/security/status', (req, res) => {
 APP.get('/api/security/camera/:id', (req, res) => {
     Security.CurrentImage(req.params.id)
         .then(response => {
-            res.send(response + '?=' + new Date().getTime())
+            res.send(response)
         })
 })
 

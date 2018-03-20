@@ -1,5 +1,3 @@
-'use strict'
-
 const ZM = require('../.config').ZoneMinder
 const MCTX = require('../components/MikaHouseContext')
 const ZCTX = require('../components/ZoneMinderContext')
@@ -130,7 +128,7 @@ module.exports = {
                     })
                     Images.Save(cam[0].source, '/images/security/', id + '.jpg', true)
                         .then(response => {
-                            resolve(response)
+                            resolve(response + '?=' + new Date().getTime())
                         })
                 })            
         })

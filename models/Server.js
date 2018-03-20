@@ -1,5 +1,3 @@
-'use strict'
-
 const MCTX = require('../components/MikaHouseContext')
 const CONFIG = require('../.config')
 

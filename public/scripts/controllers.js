@@ -69,7 +69,7 @@ app.controller('controlsController', function($http){
     self.range = new Array(50)
     self.timeout = null;
 
-    $http.get('/api/climate/thermostat')
+    $http.get('/api/control/thermostat')
         .then(function(response){
             self.thermostat = response.data;
             self.setNeedle();
@@ -83,7 +83,7 @@ app.controller('controlsController', function($http){
             window.clearTimeout(self.timeout) = null
         }
         self.timeout = window.setTimeout(function(){
-            $http.post('/api/climate/thermostat/' + self.thermostat.target)
+            $http.post('/api/control/thermostat/' + self.thermostat.target)
                 .then(function(response){
                     console.log(response.data);
                 });
@@ -200,16 +200,6 @@ app.controller('servicesController', function($http){
             self.devices = response.data;
         });
 });
-
-app.controller('climateController', function($http){
-    var self = this;
-    var thermostat = {};
-
-    $http.get('/api/climate/thermostat')
-        .then(response => {
-            self.thermostat = response.data
-        })
-})
 
 app.controller('eventController', function($http){
     var self = this;

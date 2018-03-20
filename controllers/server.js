@@ -1,5 +1,3 @@
-'use strict'
-
 const APP = require('express')()
 
 let Server = require('../models/Server')

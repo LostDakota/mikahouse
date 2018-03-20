@@ -1,5 +1,3 @@
-'use strict'
-
 const SICKRAGE = require('../.config').SickRage
 const PLEX = require('../.config').Plex
 const MCTX = require('../components/MikaHouseContext')

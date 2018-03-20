@@ -1,5 +1,3 @@
-'use strict'
-
 const Media = require('../models/Media')
 const APP = require('express')()
 

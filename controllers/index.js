@@ -1,8 +1,7 @@
-'use strict'
+const APP = require('express')()
 
 let fs = require('fs')
 let path = require('path')
-let APP = require('express')()
 
 console.log('Loading controllers...')
 

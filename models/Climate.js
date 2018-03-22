@@ -13,11 +13,11 @@ module.exports = {
                 if(err) reject(err)
                 nest.fetchStatus((data) => {
                     var n = data.shared[NEST.DEVICEID]
-                    var day = new Date().getDay()
                     var stats = {
                         current: toFarenheit(n.current_temperature),
                         target: toFarenheit(n.target_temperature),
-                        away: data.structure[NEST.STRUCTUREID].away
+                        away: data.structure[NEST.STRUCTUREID].away,
+                        heater: n.hvac_heater_state
                     }
                     resolve(stats)
                 })
@@ -29,13 +29,15 @@ module.exports = {
             if(temperature != null){
                 nest.login(NEST.USERNAME, NEST.PASS, (err, data) => {
                     if(err) reject(err)
-                    nest.setTemperature(NEST.DEVICEID, nest.ftoc(temperature))
-                    resolve('ok')
+                    nest.fetchStatus(data => {
+                        nest.setTemperature(NEST.DEVICEID, nest.ftoc(temperature))
+                        resolve('ok')
+                    })                    
                 })
             }else if(away != null){
                 nest.login(NEST.USERNAME, NEST.PASS, (err, data) => {
                     if(err) reject(err)
-                    nest.fetchStatus((data) => {
+                    nest.fetchStatus(data => {
                         if(away == 'true'){
                             nest.setAway()
                         }else{

@@ -8,7 +8,7 @@
                     <div ng-click="controls.change(-1)" style="flex:1" buzz>
                         <i class="fa fa-fw fa-minus-circle fa-2x temperature-control"></i>
                     </div>
-                    <div class="thermostat" ng-class="{'heating' : controls.thermostat.target > controls.thermostat.current}">
+                    <div class="thermostat" ng-class="{'heating' : controls.thermostat.heater}">
                         <div class="needle"></div>
                         <div class="current"></div>
                         <div class="ticks" ng-repeat="i in controls.range track by $index">

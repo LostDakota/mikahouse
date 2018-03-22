@@ -80,13 +80,10 @@ app.controller('controlsController', function($http){
         self.thermostat.target += degree;
         self.setNeedle();
         if(self.timeout !== null){
-            window.clearTimeout(self.timeout) = null
+            window.clearTimeout(self.timeout);
         }
         self.timeout = window.setTimeout(function(){
             $http.post('/api/control/thermostat/' + self.thermostat.target)
-                .then(function(response){
-                    console.log(response.data);
-                });
         }, 10000);
     }
 

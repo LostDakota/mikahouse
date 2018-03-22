@@ -5,27 +5,18 @@ let ping = require('ping')
 let os = require('os-utils')
 let diskspace = require('diskspace')
 let request = require('request')
+let moment = require('moment')
 
-var format = (seconds) => {
-    var sec = parseInt(seconds, 10)
-    var hours = Math.floor(sec / 3600)
-    var minutes = Math.floor((sec - (hours * 3600)) / 60)
-    var seconds = sec - (hours * 3600) - (minutes * 60)
-
-    var str = []
-
-    if(hours > 0){
-        str.push(hours + "h")
+function format(seconds){
+    function pad(s){
+      return (s < 10 ? '0' : '') + s;
     }
-    if(minutes > 0){
-        str.push(minutes + "m")
-    }
-    if(seconds > 0){
-        str.push(seconds + "s")
-    }
-
-    return str.toString()
-}
+    var hours = Math.floor(seconds / (60*60));
+    var minutes = Math.floor(seconds % (60*60) / 60);
+    var seconds = Math.floor(seconds % 60);
+  
+    return pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
+  }
 
 var driveSpace = (driveLetter) => {
     return new Promise((resolve, reject) => {
@@ -106,12 +97,13 @@ module.exports = {
     },
     Uptime: (construct) => {
         return new Promise((resolve, reject) => {
+            var time = format(process.uptime())
             if(construct) resolve({
                 Name: 'Uptime',
                 Icon: 'fa-desktop',
-                Value : format(process.uptime())
+                Value : time
             })
-            resolve({name: 'Uptime', value: format(process.uptime())})
+            resolve({name: 'Uptime', value: time})
         })
     },
     DiskUsage: () => {

@@ -53,6 +53,8 @@ module.exports = {
             request.get('http://' + CONFIG.ZoneMinder.Host + ':88', (err, response, body) => {
                 if(err) reject(err)
                 var devices = JSON.parse(body)
+                if(devices == 'undefined')
+                    return reject(undefined)
                 devices.forEach(device => {
                     MCTX.query('insert into network (ip, mac) values ("' + device.ip + '", "' + device.mac + '") on duplicate key update recorded=values(recorded)', (err, rows, fields) => {
                         if(err) reject(err)

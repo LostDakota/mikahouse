@@ -116,7 +116,7 @@ app.controller('controlsController', function($http){
 app.controller('securityController', function($http){
     var self = this;
     self.todayseventcount = null;
-    self.status = {};
+    self.status = {result : 0};
     self.cam1 = '';
     self.cam2 = '';
     self.event = {};

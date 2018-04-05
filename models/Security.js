@@ -23,30 +23,32 @@ function buildEvent(eventId){
 
     return new Promise((resolve, reject) => {
         request.get(ZM.Api + 'events/' + eventId + '.json', (err, response, body) => {
-            if(err) reject('error')
+            if(err){
+                reject(err)
+            }else{
+                var eventObj = JSON.parse(body).event            
+                var alarmFrame = eventObj.Frame.find(element => {
+                    return element.Type == 'Alarm'
+                })
 
-            var eventObj = JSON.parse(body).event            
-            var alarmFrame = eventObj.Frame.find(element => {
-                return element.Type == 'Alarm'
-            })
+                var imgPath = ZM.Url + eventObj.Event.BasePath + '000' + alarmFrame.FrameId + imageSuffix            
+                var videoPath = ZM.Url + eventObj.Event.BasePath + 'Event-' + eventId + videoSuffix
 
-            var imgPath = ZM.Url + eventObj.Event.BasePath + '000' + alarmFrame.FrameId + imageSuffix            
-            var videoPath = ZM.Url + eventObj.Event.BasePath + 'Event-' + eventId + videoSuffix
-
-            Promise.all([
-                Images.Save(videoPath, '/images/security/events/', eventId + '.mp4', true),
-                Images.Save(imgPath, '/images/security/events/', eventId + '.jpg', false)
-            ]).then(response => {
-                var search = (str, arr) => {
-                    for (var i = 0; i < arr.length; i++){
-                        if(arr[i].match(str)) return i;
+                Promise.all([
+                    Images.Save(videoPath, '/images/security/events/', eventId + '.mp4', true),
+                    Images.Save(imgPath, '/images/security/events/', eventId + '.jpg', false)
+                ]).then(response => {
+                    var search = (str, arr) => {
+                        for (var i = 0; i < arr.length; i++){
+                            if(arr[i].match(str)) return i;
+                        }
+                        return -1;
                     }
-                    return -1;
-                }
-                event.poster = response[search('jpg', response)]
-                event.video = response[search('mp4', response)]
-                resolve(event)
-            })
+                    event.poster = response[search('jpg', response)]
+                    event.video = response[search('mp4', response)]
+                    resolve(event)
+                })
+            }            
         })
     })
 }
@@ -89,7 +91,7 @@ module.exports = {
     TodaysEventCount: () => {
         return new Promise((resolve, reject) => {
             ZCTX.query('select count(*) as count from Events where EndTime > curdate()', (err, rows, fields) => {
-                if(err) reject('error')
+                if(err) reject(err)
                 resolve(rows[0].count)
             })
         })
@@ -99,21 +101,25 @@ module.exports = {
         var imageSuffix = '-capture.jpg'
         return new Promise((resolve, reject) => {
             ZCTX.query('select Id from Events order by id desc limit 1', (err, rows, fields) => {
-                if(err) reject('error')
+                if(err) reject(err)
                 var id = rows[0].Id
                 var event = {}
                 request.get(ZM.Api + 'events/' + id + '.json', (err, response, body) => {
-                    var eventObj = JSON.parse(body).event
-                    event.time = eventObj.Event.EndTime
-                    var alarmFrame = eventObj.Frame.find(element => {
-                        return element.Type == 'Alarm'
-                    })
-                    var path = ZM.Url + eventObj.Event.BasePath + '000' + alarmFrame.FrameId + imageSuffix
-                    Images.Save(path, '/images/security/', 'last.jpg', true)
-                        .then(response => {
-                            event.image = response + '?=' + new Date().getTime()
-                            resolve(event)
+                    if(err){
+                        reject(err)
+                    }else{
+                        var eventObj = JSON.parse(body).event
+                        event.time = eventObj.Event.EndTime
+                        var alarmFrame = eventObj.Frame.find(element => {
+                            return element.Type == 'Alarm'
                         })
+                        var path = ZM.Url + eventObj.Event.BasePath + '000' + alarmFrame.FrameId + imageSuffix
+                        Images.Save(path, '/images/security/', 'last.jpg', true)
+                            .then(response => {
+                                event.image = response + '?=' + new Date().getTime()
+                                resolve(event)
+                            })               
+                    }                    
                 })
             })
         })
@@ -146,11 +152,14 @@ module.exports = {
         })
     },
 
-    Status: () => {
+    Status: async () => {
         return new Promise((resolve, reject) => {
-            request.get(ZM.Api + 'host/daemonCheck.json', (err, response, body) => {
-                if(err) reject('error')
-                resolve(JSON.parse(body))
+            request(ZM.Api + 'host/daemonCheck.json', (err, response, body) => {
+                if(err){
+                    reject(err)
+                }else{
+                    resolve(JSON.parse(body))
+                }
             })
         })
     },
@@ -203,6 +212,9 @@ module.exports = {
                                     Events.SetEvent(last.name + ' left. Enabling security.')
                                 })
                         }
+                    })
+                    .catch(err => {
+                        reject(err)
                     })
             })
         })

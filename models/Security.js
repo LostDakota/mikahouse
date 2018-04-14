@@ -7,7 +7,7 @@ let fs = require('fs')
 let Images = require('../services/Images')
 let Events = require('../models/Events')
 
-let camera = () => {
+let cameras = () => {
     return new Promise((resolve, reject) => {
         MCTX.query('select * from cameras where active=1', (err, rows, fields) => {
             if(err) reject('error')

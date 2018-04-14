@@ -1,12 +1,10 @@
-'use strict'
-
 const PUBLIC = __dirname + '/../public'
 
 let fs = require('fs')
 let request = require('request')
 let jimp = require('jimp')
 
-var resize = (imagePath) => {
+let resize = (imagePath) => {
     return new Promise((resolve, reject) => {
         jimp.read(imagePath, (err, file) => {
             if(err) reject(err)

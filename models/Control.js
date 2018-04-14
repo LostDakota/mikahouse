@@ -6,7 +6,7 @@ module.exports = {
     Garage: () => {
         return new Promise((resolve, reject) => {
             request.get(GARAGE, (err, response, body) => {
-                if(err) reject('error')
+                if(err) reject(err)
                 resolve(body)
             })
         })

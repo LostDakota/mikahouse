@@ -8,6 +8,9 @@ APP.get('/api/control/garage', (req, res) => {
         .then(response => {
             res.json(response)
         })
+        .catch(err => {
+            res.status(500).send(err);
+        })
 })
 
 APP.get('/api/control/thermostat', (req, res) => {

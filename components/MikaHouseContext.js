@@ -1,5 +1,3 @@
-'use strict'
-
 let config = require('../.config.js');
 let mysql = require('mysql');
 

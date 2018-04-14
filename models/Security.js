@@ -7,7 +7,7 @@ let fs = require('fs')
 let Images = require('../services/Images')
 let Events = require('../models/Events')
 
-function cameras(){
+let camera = () => {
     return new Promise((resolve, reject) => {
         MCTX.query('select * from cameras where active=1', (err, rows, fields) => {
             if(err) reject('error')
@@ -16,7 +16,7 @@ function cameras(){
     })    
 }
 
-function buildEvent(eventId){
+let buildEvent= eventId => {
     var event = {}
     var imageSuffix = '-capture.jpg'   
     var videoSuffix = '-r1-s0_5.mp4' 
@@ -53,7 +53,7 @@ function buildEvent(eventId){
     })
 }
 
-function find(people, status){
+let find = (people, status) => {
     console.log('people: ' + people)
     people.find(person => {
         return person.status === status

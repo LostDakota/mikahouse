@@ -7,7 +7,7 @@ let diskspace = require('diskspace')
 let request = require('request')
 let moment = require('moment')
 
-function format(seconds){
+let format = seconds => {
     function pad(s){
       return (s < 10 ? '0' : '') + s;
     }
@@ -16,7 +16,7 @@ function format(seconds){
     var seconds = Math.floor(seconds % 60);
   
     return pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
-  }
+}
 
 var driveSpace = (driveLetter) => {
     return new Promise((resolve, reject) => {

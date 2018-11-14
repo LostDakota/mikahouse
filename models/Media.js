@@ -30,14 +30,18 @@ var buildMovies = (moviesObj) => {
     return new Promise((resolve, reject) => {
         client.query(moviesObj.thumb).then(function(image){
             var file = __dirname + '/../public/images/thumbs/' + moviesObj.ratingKey + '.jpg'
-            fs.writeFile(file, new Buffer(image), err => {
-                if(!err){
-                    moviesObj.thumb = '/images/thumbs/' +moviesObj.ratingKey + '.jpg'
-                    resolve(moviesObj)
-                }else{
-                    reject(err)
-                }
-            })
+            moviesObj.thumb = '/images/thumbs/' + moviesObj.ratingKey + '.jpg'
+            if(!fs.existsSync(file)){
+                fs.writeFile(file, new Buffer(image), err => {
+                    if(!err){                        
+                        resolve(moviesObj)
+                    }else{
+                        reject(err)
+                    }
+                })
+            } else {
+                resolve(moviesObj)
+            }
         })
     })
 }

@@ -1,8 +1,8 @@
-var version = 'v5::';
+var version = 'v6::';
 var cacheName = 'mika.house';
 var filesToCache = [
     '/manifest.json',
-    '/styles/screen.css?=1',
+    '/styles/screen.css',
     '/scripts/app.js',
     '/scripts/controllers.js',
     '/fonts/fontawesome-webfont.woff2?v=4.7.0'

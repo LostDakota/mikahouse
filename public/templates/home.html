@@ -1,71 +1,75 @@
 <div class="container" ng-controller="homeController as home" ng-cloak>
 
-    <div class="row">
-        <div class="section-heading">Who's Home</div>
-    </div>
-    <div class="row">            
-        <div class="col" ng-repeat="person in home.people">
-            <div class="card">
-                <img ng-src="{{person.image}}">
-                <div class="card-text">{{person.name}} - {{person.status}}</div>
+    <div class="row">        
+
+        <div class="col-12 col-sm-6">
+            <div class="row">
+                <div class="section-heading col-12">Who's Home</div>
+                <div class="col-4" ng-repeat="person in home.people">
+                    <div class="card">
+                        <img ng-src="{{person.image}}">
+                        <div class="card-text">{{person.name}} - {{person.status}}</div>
+                    </div>                    
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="section-heading">Last Event</div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <div class="card">
-                <div class="fade-mask">
-                    <img class="fade-in" fade-in src="/images/security/last.jpg" ng-src="{{home.event.image}}">
-                </div>                    
-                <div class="text-right card-text">{{home.event.time | fromTimestamp}}</div>
+        <div class="col-12 col-sm-6" ng-show="home.events.image">
+            <div class="row">
+                <div class="section-heading col-12">Last Event</div>
+                <div class="col-12">
+                    <div class="card">
+                        <div class="fade-mask">
+                            <img class="fade-in" fade-in src="/images/security/last.jpg" ng-src="{{home.event.image}}">
+                        </div>                    
+                        <div class="text-right card-text">{{home.event.time | fromTimestamp}}</div>
+                    </div>
+                </div>                
+            </div>                            
+        </div>
+
+        <div class="col-12 col-sm-6">
+            <div class="row">
+                <div class="section-heading col-12">Server Stats</div>
+                <div class="col-4" ng-repeat="stat in home.server" ng-cloak>
+                    <div class="card">
+                        <i class="fa fa-fw big-icon" ng-class="stat.icon"></i>
+                        <div class="card-text">
+                            {{stat.name + ':'}}<br>
+                            {{stat.statistic}}
+                        </div>
+                    </div>
+                </div>
             </div>                
-        </div>
-    </div>
+        </div>        
 
-    <div class="row">
-        <div class="section-heading">Server Stats</div>
-    </div>
-    <div class="row">
-        <div class="col" ng-repeat="stat in home.server" ng-cloak>
-            <div class="card">
-                <i class="fa fa-fw big-icon" ng-class="stat.icon"></i>
-                <div class="card-text">
-                    {{stat.name + ':'}}<br>
-                    {{stat.statistic}}
+        <div class="col-12 col-sm-6">
+            <div class="row">
+                <div class="section-heading col-12">Latest Show</div>
+                <div class="col-12">
+                    <div class="card">
+                        <img ng-src="{{home.newestshow.fanart}}">
+                        <div class="text-right card-text" ng-bind="home.newestshow.showtitle + ' - ' + home.newestshow.name"></div>
+                    </div>
+                </div> 
+            </div>               
+        </div>
+
+        <div class="col-12 col-sm-6">
+            <div class="row">
+                <div class="section-heading col-12">Recent Activity</div>
+                <div ng-repeat="event in home.events" class="col-4">
+                    <div class="card">
+                        <i class="fa fa-fw big-icon" ng-class="{'fa-sign-in' : event.notif.indexOf('returned') != -1, 'fa-sign-out' : event.notif.indexOf('left') != -1}"></i>
+                        <div class="card-text">
+                            {{event.notif.split(',')[0].split('.')[0]}}<br>
+                            {{event.date | fromNow}}
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </div>            
         </div>
-    </div>
 
-    <div class="row">
-        <div class="section-heading">Latest Show</div>
     </div>
-    <div class="row">
-        <div class="col">
-            <div class="card">
-                <img ng-src="{{home.newestshow.fanart}}">
-                <div class="text-right card-text" ng-bind="home.newestshow.showtitle + ' - ' + home.newestshow.name"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="section-heading">Recent Activity</div>
-    </div>
-    <div class="row">
-        <div ng-repeat="event in home.events" class="col">
-            <div class="card">
-                <i class="fa fa-fw big-icon" ng-class="{'fa-sign-in' : event.notif.indexOf('returned') != -1, 'fa-sign-out' : event.notif.indexOf('left') != -1}"></i>
-                <div class="card-text">
-                    {{event.notif.split(',')[0].split('.')[0]}}<br>
-                    {{event.date | fromNow}}
-                </div>
-            </div>
-        </div>
         
-    </div>
 </div>

@@ -1,28 +1,23 @@
-var version = 'v6::';
+var version = 'v8::';
 var cacheName = 'mika.house';
 var filesToCache = [
     '/manifest.json',
     '/styles/screen.css',
     '/scripts/app.js',
     '/scripts/controllers.js',
-    '/fonts/fontawesome-webfont.woff2?v=4.7.0'
+    '/templates/login.html'
 ];
 
 self.addEventListener("install", function(e) {
-  // console.log('WORKER: install event in progress.');
   e.waitUntil(
     caches.open(version + cacheName)
       .then(function(cache) {
         return cache.addAll(filesToCache);
       })
-      .then(function(){
-        // do stuff
-      })
   );
 });
 
 self.addEventListener("fetch", function(event){
-  // console.log('WORKER: fetch event in progress.');
   if(event.request.method !== 'GET'){
     return;
   }
@@ -40,15 +35,11 @@ self.addEventListener("fetch", function(event){
           caches.open(version + 'pages')
             .then(function add(cache){
               cache.put(event.request, cacheCopy);
-            })
-            .then(function(){
-              // console.log('WORKER: fetch response stored in cache.', event.request.url);
             });
           return response;
         }
 
         function unableToResolve(){
-          // console.log('WORKER: fetch request failed in both cache and network.');
           return new Response('<h1>Service Unavailable</h1>', {
             status: 503,
             statusText: 'Service Unavailable',
@@ -62,7 +53,6 @@ self.addEventListener("fetch", function(event){
 });
 
 self.addEventListener("activate", function(event){
-  // console.log('WORKER: activate event in progress.');
   event.waitUntil(
     caches.keys()
       .then(function(keys){
@@ -74,9 +64,6 @@ self.addEventListener("activate", function(event){
             return caches.delete(key);
           })
         )
-      })
-      .then(function(){
-        // stuff
       })
   );
 });

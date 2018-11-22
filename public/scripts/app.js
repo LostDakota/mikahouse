@@ -63,13 +63,12 @@ app.factory('responseObserver', function responseObserver($q, $window) {
 app.controller('navController', function(){
     var self = this;
 
-    this.items = [
+    self.items = [
         {title: 'Home', icon: 'fa-home', link: '/'},
         {title: 'Media', icon: 'fa-play-circle', link: '/media'},
         {title: 'Controls', icon: 'fa-lightbulb-o', link: '/controls'},
         {title: 'Security', icon: 'fa-video-camera', link: '/security'},
         {title: 'Services', icon: 'fa-database', link: '/services'},
-        // {title: 'Climate', icon: 'fa-sun-o', link: '/climate'},
         {title: 'Events', icon: 'fa-exclamation-circle', link: '/events'}
     ]
 });
@@ -104,10 +103,9 @@ app.run(['$rootScope', function($rootScope){
     });
 }]);
 
-if ('serviceWorker' in navigator && 'PushManager' in window) {
-    navigator.serviceWorker
-        .register('service-worker.js')
-        .then(function() { 
-            // console.log('Service Worker Registered');
-        });
-}
+(function(){
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+        navigator.serviceWorker
+            .register('/service-worker.js');
+    }
+});

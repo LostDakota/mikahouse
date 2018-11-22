@@ -13,7 +13,7 @@
         "type": "image/png"
         }
     ],
-    "start_url": "/",
+    "start_url": "/login",
     "orientation": "portrait",
     "display": "standalone",
     "theme_color": "#427cd3",

@@ -13,7 +13,7 @@
         "type": "image/png"
         }
     ],
-    "start_url": "/login",
+    "start_url": "https://automation.mika/house/",
     "orientation": "portrait",
     "display": "standalone",
     "theme_color": "#427cd3",

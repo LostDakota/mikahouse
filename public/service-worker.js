@@ -1,69 +1,78 @@
-var version = 'v8::';
-var cacheName = 'mika.house';
+var version = 'v00000::';
+var cacheName = version + 'mika.house';
 var filesToCache = [
-    '/manifest.json',
-    '/styles/screen.css',
-    '/scripts/app.js',
-    '/scripts/controllers.js',
-    '/templates/login.html'
+    'manifest.json',
+    'styles/screen.css',
+    'scripts/app.js',
+    'scripts/controllers.js',
+    'templates/login.html'
 ];
 
-self.addEventListener("install", function(e) {
-  e.waitUntil(
-    caches.open(version + cacheName)
+self.addEventListener('install', function(event) {
+  event.waitUntil(
+    caches.open(cacheName)
       .then(function(cache) {
         return cache.addAll(filesToCache);
       })
   );
 });
 
-self.addEventListener("fetch", function(event){
-  if(event.request.method !== 'GET'){
-    return;
-  }
-  event.respondWith(
-    caches.match(event.request)
-      .then(function(cached){
-        var networked = fetch(event.request)
-          .then(fetchedFromNetwork, unableToResolve)
-          .catch(unableToResolve);
-
-        return networked || cached;
-
-        function fetchedFromNetwork(response){
-          var cacheCopy = response.clone();
-          caches.open(version + 'pages')
-            .then(function add(cache){
-              cache.put(event.request, cacheCopy);
-            });
-          return response;
-        }
-
-        function unableToResolve(){
-          return new Response('<h1>Service Unavailable</h1>', {
-            status: 503,
-            statusText: 'Service Unavailable',
-            headers: new Headers({
-              'Content-Type': 'text/html'
-            })
-          });
-        }
+self.addEventListener('fetch', function(event) {
+  var url = event.request.url;
+  if(url.indexOf('jpg') > -1 || url.indexOf('webp') > -1 && url.indexOf('?') == -1){
+    event.respondWith(
+      caches.open(cacheName).then(function(cache) {
+        return cache.match(event.request).then(function(response) {
+          var fetchPromise = fetch(event.request).then(function(networkResponse) {
+            cache.put(event.request, networkResponse.clone());
+            return networkResponse;
+          })
+          return response || fetchPromise;
+        })
       })
-  );
+    );
+  }  
 });
 
-self.addEventListener("activate", function(event){
+self.addEventListener('activate', function(event) {
   event.waitUntil(
-    caches.keys()
-      .then(function(keys){
-        return Promise.all(
-          keys.filter(function(key){
-            return !key.startsWith(version);
-          })
-          .map(function(key){
-            return caches.delete(key);
-          })
-        )
+    caches.keys().then(keys => Promise.all(
+      keys.map(key => {
+        if (key != cacheName) {
+          return caches.delete(key);
+        }
       })
+    ))
   );
 });
+
+function fromCache(request) {
+  return caches.open(version + cacheName).then(function (cache) {
+    return cache.match(request);
+  });
+}
+
+function update(request) {
+  return caches.open(version + cacheName).then(function (cache) {
+    return fetch(request).then(function (response) {
+      return cache.put(request, response.clone()).then(function () {
+        return response;
+      });
+    });
+  });
+}
+
+function refresh(response) {
+  return self.clients.matchAll()
+    .then(function(clients) {
+      clients.forEach(function(client) {
+        var message = {
+          type: 'refresh',
+          url: response.url,
+          eTag: response.headers.get('ETag')
+        };
+
+        client.postMessage(JSON.stringify(message));
+      })
+    })
+}

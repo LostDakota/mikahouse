@@ -35,14 +35,14 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
         title: 'Events',
         index: 7,
         templateUrl: '/templates/events.html'
-    });
+    });    
 
     $locationProvider.html5Mode(true);
 }]);
 
 app.config(function ($httpProvider) {
     $httpProvider.interceptors.push('responseObserver');
-})
+});
 
 app.factory('responseObserver', function responseObserver($q, $window) {
     return {
@@ -98,14 +98,12 @@ app.directive('buzz', function(){
 
 app.run(['$rootScope', function($rootScope){
     $rootScope.$on('$routeChangeSuccess', function(event, current, previous){
-        $rootScope.title = current.$$route.title;
+        $rootScope.title = current.$$route.title || 'MikaHouse Automation';
         $rootScope.index = current.$$route.index;
     });
 }]);
 
-(function(){
-    if ('serviceWorker' in navigator && 'PushManager' in window) {
-        navigator.serviceWorker
-            .register('/service-worker.js');
-    }
-});
+if ('serviceWorker' in navigator && 'PushManager' in window) {
+    navigator.serviceWorker
+        .register('../service-worker.js');
+}

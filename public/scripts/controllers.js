@@ -2,11 +2,6 @@ var timeout = null;
 
 app.controller('homeController', function($http){
     var self = this;
-    self.people = {};
-    self.server = {};
-    self.event = {};
-    self.events = {}
-    self.newestshow = {};
 
     $http.get('/api/security/lastevent')
         .then(function(response){
@@ -30,17 +25,12 @@ app.controller('homeController', function($http){
 
     $http.get('/api/events/3')
         .then(function(response){
-            self.events = response.data
+            self.events = response.data;
         });
 });
 
 app.controller('mediaController', function($http){
     var self = this;
-    self.shows = {};
-    self.movies = {};
-    self.playing = {};
-    self.modal = null;
-    self.showModal = false;
 
     self.grow = function(show){
         self.showModal = !self.showModal;
@@ -65,9 +55,8 @@ app.controller('mediaController', function($http){
 
 app.controller('controlsController', function($http){
     var self = this;
-    self.thermostat = {};
-    self.range = new Array(50)
-    self.timeout = null;
+
+    self.range = new Array(50);
 
     $http.get('/api/control/thermostat')
         .then(function(response){
@@ -115,14 +104,6 @@ app.controller('controlsController', function($http){
 
 app.controller('securityController', function($http){
     var self = this;
-    self.todayseventcount = null;
-    self.status = {result : 0};
-    self.cam1 = '';
-    self.cam2 = '';
-    self.event = {};
-    self.showModal = false;
-    self.days = {};
-    self.selected = undefined;
 
     function status(){
         $http.get('/api/security/status')
@@ -178,9 +159,6 @@ app.controller('securityController', function($http){
 
 app.controller('servicesController', function($http){
     var self = this;
-    self.server = {};
-    self.drives = {};
-    self.devices = {};
 
     $http.get('/api/server')
         .then(function(response){
@@ -200,7 +178,6 @@ app.controller('servicesController', function($http){
 
 app.controller('eventController', function($http){
     var self = this;
-    self.items = {}
 
     $http.get('/api/events')
         .then(function(response){
@@ -217,7 +194,6 @@ app.filter('fromTimestamp', function(){
 
 app.filter('normalizeTime', function(){
     return function(timestamp){
-        var date = new Date(timestamp);
         return(moment.unix(timestamp).format("dddd, MMMM Do YYYY h:mm a"));
     }
 });

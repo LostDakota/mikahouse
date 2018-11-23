@@ -1,11 +1,11 @@
-const APP = require('express')()
+const APP = require('express')();
 
-let fs = require('fs')
-let path = require('path')
+let fs = require('fs');
+let path = require('path');
 
 fs.readdirSync(__dirname).forEach((file) => {
-    if(file === 'index.js' || file === 'auth.js') return
-    APP.use(require(path.join(__dirname + "/" + file)))
-})
+    if(file === 'index.js' || file === 'auth.js') return;
+    APP.use(require(path.join(__dirname + "/" + file)));
+});
 
-module.exports = APP
+module.exports = APP;

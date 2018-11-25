@@ -1,11 +1,12 @@
-var version = 'v00000::';
+var version = 'v00003::';
 var cacheName = version + 'mika.house';
 var filesToCache = [
-    'manifest.json',
     'styles/screen.css',
     'scripts/app.js',
     'scripts/controllers.js',
-    'templates/login.html'
+    'templates/login.html',
+    'icons/icon-192.png',
+    'icons/icon-512.png'
 ];
 
 self.addEventListener('install', function(event) {

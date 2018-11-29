@@ -25,7 +25,12 @@
 
         <div class="page-title" ng-bind="title"></div>
         <div class="title-spacer"></div>
+
+        <div class="connection"></div>
+
         <ng-view class="page" ng-cloak></ng-view>
+
+        <div class="nav-spacer"></div>
 
         <div ng-controller="navController as nav" ng-cloak>
             <ul class="main-navigation">
@@ -37,8 +42,6 @@
                 </li>
             </ul>            
         </div>
-
-        <div class="nav-spacer"></div>
 
         <script src="../node_modules/jquery/dist/jquery.min.js" inline></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>

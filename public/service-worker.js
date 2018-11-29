@@ -1,4 +1,4 @@
-var version = 'v00003::';
+var version = 'v00012::';
 var cacheName = version + 'mika.house';
 var filesToCache = [
     'styles/screen.css',
@@ -20,19 +20,17 @@ self.addEventListener('install', function(event) {
 
 self.addEventListener('fetch', function(event) {
   var url = event.request.url;
-  if(url.indexOf('jpg') > -1 || url.indexOf('webp') > -1 && url.indexOf('?') == -1){
-    event.respondWith(
-      caches.open(cacheName).then(function(cache) {
-        return cache.match(event.request).then(function(response) {
-          var fetchPromise = fetch(event.request).then(function(networkResponse) {
-            cache.put(event.request, networkResponse.clone());
-            return networkResponse;
-          })
-          return response || fetchPromise;
+  event.respondWith(
+    caches.open(cacheName).then(function(cache) {
+      return cache.match(event.request).then(function(response) {
+        var fetchPromise = fetch(event.request).then(function(networkResponse) {
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
         })
+        return response || fetchPromise;
       })
-    );
-  }  
+    })
+  ); 
 });
 
 self.addEventListener('activate', function(event) {

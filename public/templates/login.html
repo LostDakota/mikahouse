@@ -33,6 +33,7 @@
                 background-color: #427cd3;
                 color: #FFF;
                 padding: .5rem;
+                cursor: pointer;
             }
         </style>
 
@@ -41,7 +42,13 @@
         <form method="post" action="/login">
             <input type="text" name="username" placeholder="User Name" required>
             <input type="password" name="password" placeholder="Password" required>
-            <input class="btn" type="submit" value="Login">
+            <input id="login-button" class="btn" type="submit" value="Login">
         </form>
     </body>
+    <script>
+        var button = document.getElementById('login-button');
+        button.addEventListener('click', event => {
+            window.navigator.vibrate(50);
+        });
+    </script>
 </html>

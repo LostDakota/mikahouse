@@ -5,7 +5,7 @@ const MCTX = require('../components/MikaHouseContext')
 let User = require('../models/User')
 let bodyParser = require('body-parser')
 let jwt = require('jsonwebtoken')
-let fs = require('fs')
+let path = require('path');
 let cookieParser = require('cookie-parser')
 
 APP.use(bodyParser.json())
@@ -39,10 +39,9 @@ let logInvalid = (username, password, ip) => {
     })
 }
 
-APP.get('/login', (req, res) => {
-    var page = fs.readFileSync(__dirname + '/../public/templates/login.html')
-    res.send(page.toString())
-})
+APP.get('/login', (req, res, next) => {
+    res.sendFile(path.join(__dirname + '/../public/templates/login.html'));
+});
 
 APP.post('/login', (req, res) => {
     var ip = req.header('x-forwarded-for') || req.connection.remoteAddress

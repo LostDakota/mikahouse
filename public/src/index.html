@@ -8,7 +8,8 @@
         <meta name="description" content="MikaHouse Automation">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#427cd3">
-        <link rel="manifest" href="/manifest.json">
+        <link rel="manifest" href="manifest.json">
+        <link rel="shortcut icon" type="image/png" href="/icons/icon-192.png" />
 
         <link rel="preload" as="style" href="/styles/screen.css" onload="this.rel='stylesheet'">
 
@@ -55,6 +56,12 @@
                 // options
                 itemSelector: '.col-sm-6',
                 columnWidth: 200
+            });            
+
+            window.addEventListener('load', function(e) {
+                if('serviceWorker' in navigator){
+                    navigator.serviceWorker.register('/service-worker.js');
+                }
             });
         </script>
 

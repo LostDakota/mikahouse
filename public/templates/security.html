@@ -4,7 +4,7 @@
         <div class="section-heading">System Status</div>
         <div class="col">
             <div buzz class="card">
-                <i buzz id="toggle-security" ng-class="{'fa-ban' : security.status.result == 0, 'fa-video-camera' : security.status.result == 1}" class="fa fa-fw big-icon" ng-click="security.toggle()"></i>
+                <i buzz id="toggle-security" ng-class="{'fa-ban' : security.status.result == 0, 'fa-video-camera' : security.status.result == 1}" class="fa fa-fw big-icon fa-ban" ng-click="security.toggle()"></i>
                 <div class="card-text" ng-bind="security.status.result == 1 ? 'System is Active' : 'System is Disabled'"></div>
             </div>
         </div>

@@ -35,7 +35,7 @@ app.config(['$routeProvider', '$locationProvider', function($routeProvider, $loc
         title: 'Events',
         index: 7,
         templateUrl: '/templates/events.html'
-    });    
+    });
 
     $locationProvider.html5Mode(true);
 }]);

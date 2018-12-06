@@ -1,39 +1,52 @@
-var version = 'v00012::';
-var cacheName = version + 'mika.house';
+var cacheName = 'v3::mika.house';
+
 var filesToCache = [
-    'styles/screen.css',
-    'scripts/app.js',
-    'scripts/controllers.js',
-    'templates/login.html',
-    'icons/icon-192.png',
-    'icons/icon-512.png'
+  'manifest.json',
+  'styles/screen.css',
+  'scripts/app.js',
+  'scripts/controllers.js',
+  'templates/login.html',
+  'icons/icon-192.png',
+  'icons/icon-512.png',
+  'images/security/last.jpg'
 ];
 
-self.addEventListener('install', function(event) {
-  event.waitUntil(
-    caches.open(cacheName)
-      .then(function(cache) {
-        return cache.addAll(filesToCache);
-      })
+var cacheableAssetTypes = [
+  'jpg', 'png', 'webp', 'js', 'css'
+]
+
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(cacheName).then(cache => {
+      return cache.addAll(filesToCache);
+    })
   );
 });
 
-self.addEventListener('fetch', function(event) {
-  var url = event.request.url;
+self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.open(cacheName).then(function(cache) {
-      return cache.match(event.request).then(function(response) {
-        var fetchPromise = fetch(event.request).then(function(networkResponse) {
-          cache.put(event.request, networkResponse.clone());
-          return networkResponse;
-        })
-        return response || fetchPromise;
+    caches.open(cacheName)
+      .then(async cache => {
+        const response = await cache.match(event.request);
+        return response || fetch(event.request)
+          .then(resource => {
+            var url = event.request.url;
+            if(url && evaluateCacheable(url) && url.indexOf('?') == -1) {
+              cache.put(event.request, resource.clone())
+                .then(cached => {
+                  return cached;
+                })
+                .catch(err => {})
+            }
+            return resource;
+          })
+          .catch(err => {})
       })
-    })
-  ); 
+      .catch(err => {})
+  );
 });
 
-self.addEventListener('activate', function(event) {
+self.addEventListener('activate', function (event) {
   event.waitUntil(
     caches.keys().then(keys => Promise.all(
       keys.map(key => {
@@ -42,36 +55,10 @@ self.addEventListener('activate', function(event) {
         }
       })
     ))
-  );
+  );  
 });
 
-function fromCache(request) {
-  return caches.open(version + cacheName).then(function (cache) {
-    return cache.match(request);
-  });
-}
-
-function update(request) {
-  return caches.open(version + cacheName).then(function (cache) {
-    return fetch(request).then(function (response) {
-      return cache.put(request, response.clone()).then(function () {
-        return response;
-      });
-    });
-  });
-}
-
-function refresh(response) {
-  return self.clients.matchAll()
-    .then(function(clients) {
-      clients.forEach(function(client) {
-        var message = {
-          type: 'refresh',
-          url: response.url,
-          eTag: response.headers.get('ETag')
-        };
-
-        client.postMessage(JSON.stringify(message));
-      })
-    })
+var evaluateCacheable = function(url) {
+  var shouldCache = cacheableAssetTypes.map(type => url.indexOf(type) != -1);
+  return shouldCache.includes(true);
 }

@@ -1,18 +1,18 @@
-const APP = require('express')()
+const APP = require('express')();
 
-let comp = require('compression')
-let js = require('./components/JobServer')
+let comp = require('compression');
+let js = require('./components/JobServer');
 
-APP.use(comp({level: 9}))
+APP.use(comp({level: 9}));
 
-APP.use(require('./controllers/auth'))
+APP.use(require('./controllers/auth'));
 
-APP.use(require('express').static('public', {maxAge: '1w'}))
+APP.use(require('express').static('./public'));
 
-APP.use(require('./controllers'))
+APP.use(require('./controllers'));
 
 APP.get('*', (req, res) => {
     res.redirect('/')
-})
+});
 
-APP.listen(1337, () => {})
+APP.listen(1337, () => {});

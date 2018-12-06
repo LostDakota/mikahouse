@@ -1,6 +1,6 @@
 var timeout = null;
 
-app.controller('homeController', function($http){
+app.controller('homeController', function($http, $q){
     var self = this;
 
     $http.get('/api/security/lastevent')

@@ -152,6 +152,7 @@ app.controller('securityController', function($http){
                 jQuery('#toggle-security').removeClass('fa-spin');
                 status();
             });
+        window.scrollY(0);
     }
 
     status();

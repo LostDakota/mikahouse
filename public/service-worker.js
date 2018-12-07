@@ -1,4 +1,4 @@
-var cacheName = 'v3::mika.house';
+var cacheName = 'v13::mika.house';
 
 var filesToCache = [
   'manifest.json',
@@ -6,7 +6,6 @@ var filesToCache = [
   'scripts/app.js',
   'scripts/controllers.js',
   'templates/login.html',
-  'icons/icon-192.png',
   'icons/icon-512.png',
   'images/security/last.jpg'
 ];
@@ -31,7 +30,7 @@ self.addEventListener('fetch', event => {
         return response || fetch(event.request)
           .then(resource => {
             var url = event.request.url;
-            if(url && evaluateCacheable(url) && url.indexOf('?') == -1) {
+            if(url && evaluateCacheable(url)) {
               cache.put(event.request, resource.clone())
                 .then(cached => {
                   return cached;
@@ -59,6 +58,8 @@ self.addEventListener('activate', function (event) {
 });
 
 var evaluateCacheable = function(url) {
+  if(url.indexOf('?') != -1)
+    return false;
   var shouldCache = cacheableAssetTypes.map(type => url.indexOf(type) != -1);
   return shouldCache.includes(true);
 }

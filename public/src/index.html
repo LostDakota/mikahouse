@@ -29,7 +29,7 @@
 
         <div class="connection"></div>
 
-        <ng-view class="page" ng-cloak></ng-view>
+        <ng-view automscroll="true" class="page" ng-cloak></ng-view>
 
         <div class="nav-spacer"></div>
 
@@ -50,14 +50,7 @@
         <script src="/scripts/controllers.js"></script>
         <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js" inline></script>
 
-        <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
         <script>
-            $('.container').masonry({
-                // options
-                itemSelector: '.col-sm-6',
-                columnWidth: 200
-            });            
-
             window.addEventListener('load', function(e) {
                 if('serviceWorker' in navigator){
                     navigator.serviceWorker.register('/service-worker.js');

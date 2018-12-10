@@ -8,9 +8,10 @@
         "type": "image/png"
         }
     ],
-    "start_url": "https://automation.mika.house/index.html",
+    "start_url": "/index.html",
     "orientation": "portrait",
     "display": "standalone",
     "theme_color": "#427cd3",
-    "background_color": "#EEE"
+    "background_color": "#EEE",
+    "scope": "/"
 }

@@ -1,6 +1,7 @@
-var cacheName = 'v13::mika.house';
+var cacheName = 'v21::mika.house';
 
 var filesToCache = [
+  '/',
   'manifest.json',
   'styles/screen.css',
   'scripts/app.js',
@@ -11,7 +12,7 @@ var filesToCache = [
 ];
 
 var cacheableAssetTypes = [
-  'jpg', 'png', 'webp', 'js', 'css'
+  'jpg', 'png', 'webp', 'js', 'css', 'html'
 ]
 
 self.addEventListener('install', e => {

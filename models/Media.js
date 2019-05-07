@@ -49,23 +49,28 @@ var buildMovies = (moviesObj) => {
 module.exports = {
     Newest: (single) => {
         return new Promise((resolve, reject) => {
-            var last = '/?cmd=history&limit=3&type=downloaded'
+            var last = '/?cmd=history&limit=3&type=downloaded';
             request.get(SICKRAGE.Host + SICKRAGE.Key + last, (err, response, body) => {
-                if(err) reject('error')
-                var three = JSON.parse(body).data
-                if(single){
-                    resolve(buildShows(three[0]))
-                }else{
-                    Promise.all([
-                        buildShows(three[0]),
-                        buildShows(three[1]),
-                        buildShows(three[2])
-                    ]).then(results => {
-                        resolve(results)
-                    })                
+                if(err) {
+                    reject('Media.js');
+                } else {
+                    if(body){
+                        var three = JSON.parse(body).data;
+                        if(single){
+                            resolve(buildShows(three[0]));
+                        }else{
+                            Promise.all([
+                                buildShows(three[0]),
+                                buildShows(three[1]),
+                                buildShows(three[2])
+                            ]).then(results => {
+                                resolve(results);
+                            });
+                        }
+                    }                    
                 }                
-            })
-        })
+            });
+        });
     },
     Movies: () => {
         return new Promise((resolve, reject) => {

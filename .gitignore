@@ -10,3 +10,4 @@ package-lock.json
 /public/images/security/events/*.mp4
 /public/images/art/
 /public/images/thumbs/
+.index-dev.js

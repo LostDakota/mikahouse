@@ -97,7 +97,7 @@ app.controller('controlsController', function($http){
     self.garage = function(){
         $http.get('/api/control/garage')
             .then(function(response){
-                console.log(response.status);
+                return;
             });
     }
 });

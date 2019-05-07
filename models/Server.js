@@ -72,6 +72,14 @@ module.exports = {
             })
         })
     },
+    GetLiveStats: () => {
+        return new Promise((resolve, reject) => {
+            Promise.all([module.exports.Ping(), module.exports.Load(), module.exports.Uptime()])
+            .then(data => {
+                resolve(data);
+            });
+        });        
+    },
     Ping: (construct) => {
         return new Promise((resolve, reject) => {
             ping.promise.probe('google.com')

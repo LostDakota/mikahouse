@@ -7,6 +7,15 @@ let fs = require('fs')
 let Images = require('../services/Images')
 let Events = require('../models/Events')
 
+let  guid = () => {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+  }
+
 let cameras = () => {
     return new Promise((resolve, reject) => {
         MCTX.query('select * from cameras where active=1', (err, rows, fields) => {
@@ -29,26 +38,31 @@ let buildEvent = eventId => {
                 var eventObj = JSON.parse(body).event            
                 var alarmFrame = eventObj.Frame.find(element => {
                     return element.Type == 'Alarm'
-                })
+                });
 
-                var padding = '00000'.substr(0, 5 - alarmFrame.FrameId.length);
-                var imgPath = ZM.Url + eventObj.Event.BasePath + padding + alarmFrame.FrameId + imageSuffix
-                var videoPath = ZM.Url + eventObj.Event.BasePath + 'Event-' + eventId + videoSuffix
-
-                Promise.all([
-                    Images.Save(videoPath, '/images/security/events/', eventId + '.mp4', false),
-                    Images.Save(imgPath, '/images/security/events/', eventId + '.jpg', false)
-                ]).then(response => {
-                    var search = (str, arr) => {
-                        for (var i = 0; i < arr.length; i++){
-                            if(arr[i].match(str)) return i;
+                if(alarmFrame){
+                    var padding = '00000'.substr(0, 5 - alarmFrame.FrameId.length);
+                    var imgPath = ZM.Url + eventObj.Event.BasePath + padding + alarmFrame.FrameId + imageSuffix
+                    var videoPath = ZM.Url + eventObj.Event.BasePath + 'Event-' + eventId + videoSuffix
+    
+                    Promise.all([
+                        Images.Save(videoPath, '/images/security/events/', eventId + '.mp4', false),
+                        Images.Save(imgPath, '/images/security/events/', eventId + '.jpg', false)
+                    ]).then(response => {
+                        var search = (str, arr) => {
+                            for (var i = 0; i < arr.length; i++){
+                                if(arr[i].match(str)) return i;
+                            }
+                            return -1;
                         }
-                        return -1;
-                    }
-                    event.poster = response[search('jpg', response)]
-                    event.video = response[search('mp4', response)]
-                    resolve(event)
-                })
+                        event.poster = response[search('jpg', response)]
+                        event.video = response[search('mp4', response)]
+                        event.time = eventObj.Event.EndTime;
+                        resolve(event)
+                    })
+                } else {
+                    reject({});
+                }   
             }            
         })
     })
@@ -105,31 +119,33 @@ module.exports = {
     LastEvent: () => {
         var imageSuffix = '-capture.jpg'
         return new Promise((resolve, reject) => {
-            ZCTX.query('select Id from Events order by id desc limit 1', (err, rows, fields) => {
+            ZCTX.query('select Id from Events where AlarmFrames > 0 order by id desc limit 1', (err, rows, fields) => {
                 if(err) reject(err)
-                if(rows){
+                if(rows && rows[0]){
                     var id = rows[0].Id
                     var event = {}
                     request.get(ZM.Api + 'events/' + id + '.json', (err, response, body) => {
                         if(err){
                             reject(err)
                         }else{
-                            var eventObj = JSON.parse(body).event
+                            var eventObj = JSON.parse(body).event;
+                            
                             event.time = eventObj.Event.EndTime
                             var alarmFrame = eventObj.Frame.find(element => {
                                 return element.Type == 'Alarm'
-                            })
-                            var padding = '00000'.substr(0, 5 - alarmFrame.FrameId.length)
+                            });
+
+                            var padding = '00000'.substr(0, 5 - alarmFrame.FrameId.length);
                             var path = ZM.Url + eventObj.Event.BasePath + padding + alarmFrame.FrameId + imageSuffix
                             Images.Save(path, '/images/security/', 'last.jpg', true)
                                 .then(response => {
-                                    event.image = response + '?=' + new Date().getTime()
+                                    event.image = response + '?=' + new Date().getTime();
                                     resolve(event)
-                                })
+                                });
                         }
                     })
                 }else{
-                    reject('error')
+                    resolve({});
                 }
             })
         })
@@ -151,14 +167,19 @@ module.exports = {
     },
 
     CurrentImages: () => {
-        var cams = cameras()
         return new Promise((resolve, reject) => {
-            Promise.all([
-                CurrentImage(cams[0]),
-                CurrentImage(cams[1])
-            ]).then(data => {
-                resolve(data)
-            })
+            cameras()
+                .then(response => {
+                    Promise.all([
+                        module.exports.CurrentImage(response[0].id),
+                        module.exports.CurrentImage(response[1].id)
+                    ]).then(data => {
+                        resolve(data);
+                    })
+                    .catch(err => {
+                        reject(err);
+                    })
+                })    
         })
     },
 

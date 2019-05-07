@@ -1,4 +1,4 @@
-var cacheName = 'v21::mika.house';
+var cacheName = 'v32::mika.house';
 
 var filesToCache = [
   '/',
@@ -12,7 +12,7 @@ var filesToCache = [
 ];
 
 var cacheableAssetTypes = [
-  'jpg', 'png', 'webp', 'js', 'css', 'html'
+  'jpg', 'png', 'webp', 'js', 'css'
 ]
 
 self.addEventListener('install', e => {
@@ -33,9 +33,6 @@ self.addEventListener('fetch', event => {
             var url = event.request.url;
             if(url && evaluateCacheable(url)) {
               cache.put(event.request, resource.clone())
-                .then(cached => {
-                  return cached;
-                })
                 .catch(err => {})
             }
             return resource;
@@ -59,7 +56,7 @@ self.addEventListener('activate', function (event) {
 });
 
 var evaluateCacheable = function(url) {
-  if(url.indexOf('?') != -1)
+  if(url.indexOf('?') !== -1)
     return false;
   var shouldCache = cacheableAssetTypes.map(type => url.indexOf(type) != -1);
   return shouldCache.includes(true);

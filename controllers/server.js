@@ -31,10 +31,12 @@ APP.get('/api/server/drives', (req, res) => {
 })
 
 APP.get('/api/server', (req, res) => {
-    Server.GetStats()
-        .then(response => {
-            res.json(response)
-        })
+    let promises = [Server.Ping(), Server.Load(), Server.Uptime()]
+
+    Promise.all(promises)
+        .then(data => {
+            res.json(data);
+        });
 })
 
 APP.get('/api/server/network', (req, res) => {

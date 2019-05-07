@@ -42,10 +42,13 @@
         <form method="post" action="/login">
             <input type="text" name="username" placeholder="User Name" required>
             <input type="password" name="password" placeholder="Password" required>
+            <input id="referrer" type="text" name="referrer" style="display: none">
             <input id="login-button" class="btn" type="submit" value="Login">
         </form>
     </body>
     <script>
+        var referrer = document.referrer;
+        document.getElementById('referrer').value = referrer;
         var button = document.getElementById('login-button');
         button.addEventListener('click', event => {
             window.navigator.vibrate(50);

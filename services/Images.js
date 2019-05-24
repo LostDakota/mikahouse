@@ -10,18 +10,18 @@ let resize = (imagePath) => {
             if(err) reject(err)
             file.resize(300, jimp.AUTO)
                 .quality(50)
-                .write(imagePath)
-            resolve('ok')
+                .write(imagePath);         
+            resolve('ok');
         })
         .catch(err => {
-            reject(err)
+            reject(err);
         })
     })
 }
 
 module.exports = {
     Save: (input, dest, name, overwite) => {
-        var imagePath = PUBLIC + dest + name
+        var imagePath = PUBLIC + dest + name;
         return new Promise((resolve, reject) => {
             fs.exists(imagePath, exists => {
                 if(exists && !overwite){

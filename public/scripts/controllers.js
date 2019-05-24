@@ -105,6 +105,9 @@ app.controller('controlsController', function($http){
 app.controller('securityController', function($http){
     var self = this;
 
+    self.fallback1 = `/images/security/1.jpg?stamp=${new Date()}`;
+    self.fallback2 = `/images/security/2.jpg?stamp=${new Date()}`;
+
     function status(){
         $http.get('/api/security/status')
         .then(function(response){

@@ -11,3 +11,4 @@ package-lock.json
 /public/images/art/
 /public/images/thumbs/
 .index-dev.js
+/public/images/security

@@ -1,13 +1,12 @@
-const GARAGE = require('../.config').Garage
-
-let request = require('request')
+const GARAGE = require('../.config').Garage;
+let request = require('request');
 
 module.exports = {
     Garage: () => {
         return new Promise((resolve, reject) => {
             request.get(GARAGE, (err, response, body) => {
-                if(err) reject(err)
-                resolve(body)
+                if(err) reject(err);
+                resolve(body);
             })
         })
     }

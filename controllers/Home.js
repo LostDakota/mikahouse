@@ -1,12 +1,5 @@
 const APP = require('express')();
 
-let serverStats = () => {
-    Promise.all([Server.Ping(), Server.Load(), Server.Uptime()])
-        .then(data => {
-            return data;
-        })
-}
-
 let promises = [
     require('../models/User').List(),
     require('../models/Security').LastEvent(),

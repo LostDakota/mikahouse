@@ -1,48 +1,72 @@
-const PUBLIC = __dirname + '/../public'
+const PUBLIC = __dirname + '/../public';
 
-let fs = require('fs')
-let request = require('request')
-let jimp = require('jimp')
+let fs = require('fs');
+let request = require('request');
+let sharp = require('sharp');
 
 let resize = (imagePath) => {
     return new Promise((resolve, reject) => {
-        jimp.read(imagePath, (err, file) => {
-            if(err) reject(err)
-            file.resize(300, jimp.AUTO)
-                .quality(50)
-                .write(imagePath);         
-            resolve('ok');
-        })
-        .catch(err => {
-            reject(err);
-        })
-    })
+        sharp(imagePath)
+            .resize(400)
+            .toFile(imagePath.replace('jpg', 'webp'))
+            .then(() => {
+                resolve('ok');
+            })
+            .catch(err => {
+                reject(err);
+            });
+    });
+}
+
+let writeFile = (path, body) => {
+    fs.writeFile(path, body, 'binary', (err) => {
+        if(err) return false;
+        if(path.indexOf('mp4') === -1) {
+            resize(path)
+                .then(() => {
+                    return true;
+                });
+        } else {
+            return true;
+        }
+    });
+}
+
+let comparer = (imagePath, streamUrl) => {
+    let stats = fs.statSync(imagePath)["size"];
+    request.get({url: streamUrl, encoding: 'binary'}, (err, response, body) => {
+        if(stats !== body.length) {
+            writeFile(imagePath, body);
+        }
+    });
 }
 
 module.exports = {
     Save: (input, dest, name, overwite) => {
-        var imagePath = PUBLIC + dest + name;
+        let imagePath = `${PUBLIC}${dest}${name}`;
         return new Promise((resolve, reject) => {
             fs.exists(imagePath, exists => {
                 if(exists && !overwite){
-                    resolve(dest + name)
+                    comparer(imagePath, input);
+                    resolve(`${dest}${name.replace('jpg', 'webp')}`);
                 }else{
                     request.get({url: input, encoding: 'binary'}, (err, response, body) => {
                         if(err) reject('error')
-                        fs.writeFile(PUBLIC + dest + name, body, 'binary', (err) => {
-                            if(err) reject('error')
-                            if(imagePath.indexOf('mp4') === -1){
+                        var finalDestination = `${PUBLIC}${dest}${name}`;
+                        fs.writeFile(finalDestination, body, 'binary', (err) => {
+                            if(err) reject('error');
+                            if(imagePath.indexOf('mp4') === -1) {
                                 resize(imagePath)
-                                    .then(response => {
-                                        resolve(dest + name)
-                                    })
+                                    .then(() => {
+                                        resolve(`${dest}${name.replace('jpg', 'webp')}`);
+                                    });
                             }else{
-                                resolve(dest + name)
+                                resolve(`${dest}${name}`);
                             }
-                        })
-                    })
+                        });
+                    });
                 }                    
-            })        
-        })        
+            });        
+        });        
     }
 }

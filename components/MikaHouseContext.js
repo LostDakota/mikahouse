@@ -1,7 +1,7 @@
 let config = require('../.config.js');
 let mysql = require('mysql');
 
-var pool = mysql.createPool({
+let pool = mysql.createPool({
   connectionLimit: 50,
   host     : config.Main.Host,
   user     : config.Main.DbUser,

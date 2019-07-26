@@ -7,22 +7,13 @@ let fs = require('fs')
 let Images = require('../services/Images')
 let Events = require('../models/Events')
 
-let  guid = () => {
-    function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-  }
-
 let cameras = () => {
     return new Promise((resolve, reject) => {
         MCTX.query('select * from cameras where active=1', (err, rows, fields) => {
-            if(err) reject('error')
-            resolve(rows)
-        })
-    })    
+            if(err) reject('error');
+            resolve(rows);
+        });
+    });    
 }
 
 let buildEventImagePath = (alarmFrame, eventObj) => {    
@@ -42,15 +33,14 @@ let buildEvent = eventId => {
     return new Promise((resolve, reject) => {
         request.get(ZM.Api + 'events/' + eventId + '.json', (err, response, body) => {
             if(err){
-                reject(err)
+                reject(err);
             }else{
-                var eventObj = JSON.parse(body).event            
+                var eventObj = JSON.parse(body).event        ;    
                 var alarmFrame = eventObj.Frame.find(element => {
-                    return element.Type == 'Alarm'
+                    return element.Type == 'Alarm';
                 });
 
-                if(alarmFrame){
-                    
+                if(alarmFrame){                    
                     var imgPath = buildEventImagePath(alarmFrame, eventObj);
                     var videoPath = buildEventVideoPath(eventObj);
     
@@ -64,22 +54,16 @@ let buildEvent = eventId => {
                             }
                             return -1;
                         }
-                        event.poster = response[search('jpg', response)]
-                        event.video = response[search('mp4', response)]
+                        event.poster = response[search('webp', response)].replace('webp', 'jpg');
+                        event.video = response[search('mp4', response)];
                         event.time = eventObj.Event.EndTime;
-                        resolve(event)
+                        resolve(event);
                     })
                 } else {
                     reject({});
                 }   
             }            
         })
-    })
-}
-
-let find = (people, status) => {
-    people.find(person => {
-        return person.status === status
     })
 }
 
@@ -102,14 +86,14 @@ module.exports = {
                 var promises = [];
                 if(rows){
                     rows.forEach(element => {
-                        promises.push(buildEvent(element.Id))                    ;
+                        promises.push(buildEvent(element.Id));
                     });
                     Promise.all(promises)
                         .then(response => {
                             resolve(response);
                         })
                 }else{
-                    reject('error')
+                    reject('error');
                 }
             })
         })
@@ -139,9 +123,8 @@ module.exports = {
                         if(err){
                             reject(err);
                         }else{
-                            var eventObj = JSON.parse(body).event;
-                            
-                            event.time = eventObj.Event.EndTime
+                            var eventObj = JSON.parse(body).event;                            
+                            event.time = eventObj.Event.EndTime;
                             var alarmFrame = eventObj.Frame.find(element => {
                                 return element.Type == 'Alarm';
                             });
@@ -149,15 +132,15 @@ module.exports = {
                             Images.Save(buildEventImagePath(alarmFrame, eventObj), '/images/security/', 'last.jpg', true)
                                 .then(response => {
                                     event.image = response + '?=' + new Date().getTime();
-                                    resolve(event)
+                                    resolve(event);
                                 });
                         }
                     })
                 }else{
                     resolve({});
                 }
-            })
-        })
+            });
+        });
     },
 
     CurrentImage: (id) => {
@@ -165,11 +148,12 @@ module.exports = {
             cameras()
                 .then(cameras => {
                     var cam = cameras.filter(obj => {
-                        return obj.id == id
-                    })
+                        return obj.id == id;
+                    });
                     Images.Save(cam[0].source, '/images/security/', id + '.jpg', true)
                         .then(response => {
-                            resolve(response + '?=' + new Date().getTime())
+                            var cccomboBreaker = `${response}?=${new Date().getTime()}`;
+                            resolve(cccomboBreaker);
                         })
                 })            
         })
@@ -187,31 +171,31 @@ module.exports = {
                     })
                     .catch(err => {
                         reject(err);
-                    })
-                })    
-        })
+                    });
+                });
+        });
     },
 
     Status: async () => {
         return new Promise((resolve, reject) => {
             request(ZM.Api + 'host/daemonCheck.json', (err, response, body) => {
                 if(err){
-                    reject(err)
+                    reject(err);
                 }else{
-                    resolve(JSON.parse(body))
+                    resolve(JSON.parse(body));
                 }
-            })
-        })
+            });
+        });
     },
 
     ToggleState: () => {
         return new Promise((resolve, reject) => {
             module.exports.Status()
                 .then(status => {
-                    var state = status.result == 0 ? 'start' : 'stop'
+                    var state = status.result == 0 ? 'start' : 'stop';
                     request.post(ZM.Api + 'states/change/' + state + '.json', (err, reponse, body) => {
-                        if(err) reject('error')
-                        resolve(reponse)
+                        if(err) reject('error');
+                        resolve(reponse);
                     })
                 })
         })
@@ -223,40 +207,40 @@ module.exports = {
                 if(err) reject(err)
                 module.exports.Status()
                     .then(res => {
-                        var status = res.result
-                        var equiv = status === 0 ? 'Away' : 'Home'
+                        var status = res.result;
+                        var equiv = status === 0 ? 'Away' : 'Home';
 
-                        var matches = rows.filter(person => person.status === equiv)
-                        var match = rows.find(person => person.status === equiv)
+                        var matches = rows.filter(person => person.status === equiv);
+                        var match = rows.find(person => person.status === equiv);
                         
                         if(status === 1 && match != null){
 
                             module.exports.ToggleState()
                                 .then(returnedState => {
-                                    Events.SetEvent(match.name + ' returned. Disabling security.')
-                                })
+                                    Events.SetEvent(match.name + ' returned. Disabling security.');
+                                });
                         }else if(status === 0 && matches.length === 2){
                             function sortDates(a, b){
-                                return a.last_seen.getTime() - b.last_seen.getTime()
+                                return a.last_seen.getTime() - b.last_seen.getTime();
                             }
 
                             rows.forEach(person => {
-                                person.last_seen = new Date(person.last_seen)
-                            })
+                                person.last_seen = new Date(person.last_seen);
+                            });
 
                             var sorted = rows.sort(sortDates);
-                            var last = sorted[sorted.length - 1]
+                            var last = sorted[sorted.length - 1];
 
                             module.exports.ToggleState()
                                 .then(returnedState => {
-                                    Events.SetEvent(last.name + ' left. Enabling security.')
-                                })
+                                    Events.SetEvent(last.name + ' left. Enabling security.');
+                                });
                         }
                     })
                     .catch(err => {
-                        reject(err)
-                    })
-            })
-        })
+                        reject(err);
+                    });
+            });
+        });
     }
 }

@@ -12,7 +12,7 @@ APP.use(bodyParser.json())
 APP.use(bodyParser.urlencoded({ extended: true }))
 APP.use(cookieParser())
 
-let verify = (token) => {
+let verify = token => {
     return new Promise((resolve, reject) => {
         jwt.verify(token, SECRET, (err, decoded) => {
             if (err) reject(err)
@@ -35,25 +35,25 @@ let logInvalid = (username, password, ip) => {
         MCTX.query('insert into invalid_attempts (username, password, address) values ("' + username + '", "' + password + '", "' + ip + '")', (err, rows, fields) => {
             if (err) reject(err)
             resolve('ok')
-        })
-    })
+        });
+    });
 }
 
 APP.get('/login', (req, res, next) => {
-    res.sendFile(path.join(__dirname + '/../public/templates/login.html'));
+    res.sendFile(path.join(__dirname, '/../public/templates/login.html'));
 });
 
 APP.post('/login', (req, res) => {
-    var ip = req.header('x-forwarded-for') || req.connection.remoteAddress
-    var username = req.body.username.toLowerCase()
-    var password = req.body.password
-    var referrer = req.body.referrer
-    var encPassword = new Buffer(password).toString('base64')
+    const ip = req.header('x-forwarded-for') || req.connection.remoteAddress
+    let username = req.body.username.toLowerCase()
+    let password = req.body.password
+    let referrer = req.body.referrer
+    let encPassword = new Buffer(password).toString('base64')
     User.UserObject(username, encPassword)
         .then(response => {
             sign(response)
                 .then(token => {
-                    res.cookie('authToken', token)
+                    res.cookie('authToken', token, {maxAge: new Date(Number(new Date()) + 315360000000)});
                     res.redirect(referrer || '/');
                 })
                 .catch(error => {
@@ -61,7 +61,7 @@ APP.post('/login', (req, res) => {
                     res.redirect('/login')
                 })
         })
-        .catch(error => {
+        .catch(() => {
             res.redirect('/login')
         })
 })
@@ -76,13 +76,13 @@ APP.get('*', (req, res, next) => {
         res.redirect('/login')
     } else {
         verify(req.cookies.authToken)
-            .then(response => {
+            .then(() => {
                 next();
             })
-            .catch(error => {
+            .catch(() => {
                 res.redirect(403, '/login');
             })
     }
 })
 
-module.exports = APP
+module.exports = APP;

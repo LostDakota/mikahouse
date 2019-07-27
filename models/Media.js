@@ -13,9 +13,7 @@ let buildShows = showObj => {
         let fanart = `?cmd=show.getfanart&indexerid=${showObj.indexerid}`;
         request.get(`${SICKRAGE.Host}${SICKRAGE.Key}${query}`, (err, response, body) => {
             if(err) reject('error');
-            var show = JSON.parse(body).data;
-            console.log('buildshows called');
-            console.log(showObj);
+            let show = JSON.parse(body).data;
             Images.Save(`${SICKRAGE.Host}${SICKRAGE.Key}${fanart}`, `/images/fanart/`, `${showObj.indexerid}.jpg`)
                 .then(response => {
                     show.showtitle = showObj.show_name;
@@ -74,7 +72,7 @@ module.exports = {
     },
     Movies: () => {
         return new Promise((resolve, reject) => {
-            var promises = []
+            var promises = [];
             client.query('/library/sections/2/recentlyAdded?X-Plex-Container-Start=0&amp;X-Plex-Container-Size=3')
                 .then(dirs => {
                     let three = dirs.MediaContainer.Metadata.slice(0,3);
@@ -112,6 +110,6 @@ module.exports = {
                 }, err => {
                     reject(err);
                 });
-        })
+        });
     }
 }

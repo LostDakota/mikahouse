@@ -16,7 +16,8 @@ module.exports = {
                         current: toFarenheit(n.current_temperature),
                         target: toFarenheit(n.target_temperature),
                         away: data.structure[NEST.STRUCTUREID].away,
-                        heater: n.hvac_heater_state
+                        heater: n.hvac_heater_state,
+                        type: n.target_temperature_type
                     };
                     resolve(stats);
                 });

@@ -48,7 +48,6 @@ module.exports = {
             fs.exists(imagePath, exists => {
                 if(exists && !overwite){
                     comparer(imagePath, input);
-                    // resolve(`${dest}${name.replace('jpg', 'webp')}`);
                     resolve(`${dest}${name}`);
                 }else{
                     request.get({url: input, encoding: 'binary'}, (err, response, body) => {
@@ -59,7 +58,6 @@ module.exports = {
                             if(imagePath.indexOf('mp4') === -1) {
                                 resize(imagePath)
                                     .then(() => {
-                                        // resolve(`${dest}${name.replace('jpg', 'webp')}`);
                                         resolve(`${dest}${name}`);
                                     });
                             }else{

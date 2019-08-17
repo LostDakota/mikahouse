@@ -1,6 +1,7 @@
-const ZM = require('../.config').ZoneMinder
-const MCTX = require('../components/MikaHouseContext')
-const ZCTX = require('../components/ZoneMinderContext')
+const ZM = require('../.config').ZoneMinder;
+const MCTX = require('../components/MikaHouseContext');
+const ZCTX = require('../components/ZoneMinderContext');
+const ZMDIR = '/images/security/events_ln/';
 
 let request = require('request')
 let fs = require('fs')
@@ -16,15 +17,15 @@ let cameras = () => {
     });    
 }
 
-let buildEventImagePath = (alarmFrame, eventObj) => {    
+let buildEventImageFilePath = (alarmFrame, eventObj) => {
     var imageSuffix = '-capture.jpg';
     var padding = '00000'.substr(0, 5 - alarmFrame.FrameId.length);
-    return `${ZM.Url}events/${eventObj.Monitor.Id}/${eventObj.Event.StartTime.split(' ')[0]}/${eventObj.Event.Id}/${padding}${alarmFrame.FrameId}${imageSuffix}`;
+    return `${ZMDIR}${eventObj.Monitor.Id}/${eventObj.Event.StartTime.split(' ')[0]}/${eventObj.Event.Id}/${padding}${alarmFrame.FrameId}${imageSuffix}`;
 }
 
-let buildEventVideoPath = eventObj => {
+let buildEventVideoFilePath = eventObj => {
     var videoSuffix = '-r1-s0_5.mp4';
-    return `${ZM.Url}events/${eventObj.Monitor.Id}/${eventObj.Event.StartTime.split(' ')[0]}/${eventObj.Event.Id}/${eventObj.Monitor.Name}_${eventObj.Event.Id}${videoSuffix}`;
+    return `${ZMDIR}${eventObj.Monitor.Id}/${eventObj.Event.StartTime.split(' ')[0]}/${eventObj.Event.Id}/${eventObj.Monitor.Name}_${eventObj.Event.Id}${videoSuffix}`;
 }
 
 let buildEvent = eventId => {
@@ -41,24 +42,16 @@ let buildEvent = eventId => {
                 });
 
                 if(alarmFrame){                    
-                    var imgPath = buildEventImagePath(alarmFrame, eventObj);
-                    var videoPath = buildEventVideoPath(eventObj);
-    
-                    Promise.all([
-                        Images.Save(videoPath, '/images/security/events/', eventId + '.mp4', false),
-                        Images.Save(imgPath, '/images/security/events/', eventId + '.jpg', false)
-                    ]).then(response => {
-                        var search = (str, arr) => {
-                            for (var i = 0; i < arr.length; i++){
-                                if(arr[i].match(str)) return i;
-                            }
-                            return -1;
-                        }
-                        event.poster = response[search('webp', response)].replace('webp', 'jpg');
-                        event.video = response[search('mp4', response)];
-                        event.time = eventObj.Event.EndTime;
-                        resolve(event);
-                    })
+                    // var imgPath = buildEventlImagePath(alarmFrame, eventObj);
+                    var imgPath = buildEventImageFilePath(alarmFrame, eventObj);
+
+                    // var videoPath = buildEventVideoPath(eventObj);
+                    var videoPath = buildEventVideoFilePath(eventObj);
+
+                    event.poster = imgPath;
+                    event.video = videoPath;
+                    event.time = eventObj.Event.EndTime;
+                    resolve(event);
                 } else {
                     reject({});
                 }   
@@ -81,7 +74,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             var date = new Date();
             var selectedDay = day === "undefined" ? date.toLocaleDateString() : day.split('T')[0];
-            ZCTX.query('select Id from Events where date(EndTime) = "' + selectedDay + '" order by EndTime desc', (err, rows, fields) => {
+            ZCTX.query(`select Id from Events where date(EndTime) = "${selectedDay}" order by EndTime desc`, (err, rows, fields) => {
                 if(err) reject(err);
                 var promises = [];
                 if(rows){
@@ -111,7 +104,6 @@ module.exports = {
     },
 
     LastEvent: () => {
-        var imageSuffix = '-capture.jpg'
         return new Promise((resolve, reject) => {
             ZCTX.query('select Id from Events where AlarmFrames > 0 order by endtime desc limit 1', (err, rows, fields) => {
                 if(err) reject(err);
@@ -129,11 +121,8 @@ module.exports = {
                                 return element.Type == 'Alarm';
                             });
 
-                            Images.Save(buildEventImagePath(alarmFrame, eventObj), '/images/security/', 'last.jpg', true)
-                                .then(response => {
-                                    event.image = response + '?=' + new Date().getTime();
-                                    resolve(event);
-                                });
+                            event.image = buildEventImageFilePath(alarmFrame, eventObj);
+                            resolve(event);
                         }
                     })
                 }else{

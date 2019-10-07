@@ -100,5 +100,12 @@ module.exports = {
                 });
             });
         });
+    },
+    Location: (userName, lat, long) => {
+        return new Promise((resolve, reject) => {
+            MCTX.query(`update tracker set latitude = ${lat}, longiture = ${long} where name = "${userName}`, () => {
+                resolve('ok');
+            });
+        });
     }
 }

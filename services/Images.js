@@ -42,26 +42,23 @@ let comparer = (imagePath, streamUrl) => {
 }
 
 module.exports = {
-    Save: (input, dest, name, overwite) => {
-        let imagePath = `${PUBLIC}${dest}${name}`;
+    Save: (input, dest, overwite) => {
+        let imagePath = `${PUBLIC}${dest}`;
         return new Promise((resolve, reject) => {
             fs.exists(imagePath, exists => {
                 if(exists && !overwite){
                     comparer(imagePath, input);
-                    resolve(`${dest}${name}`);
+                    resolve(`${dest}`);
                 }else{
                     request.get({url: input, encoding: 'binary'}, (err, response, body) => {
                         if(err) reject('error')
-                        let finalDestination = `${PUBLIC}${dest}${name}`;
+                        let finalDestination = `${PUBLIC}${dest}`;
                         fs.writeFile(finalDestination, body, 'binary', (err) => {
                             if(err) reject('error');
                             if(imagePath.indexOf('mp4') === -1) {
-                                resize(imagePath)
-                                    .then(() => {
-                                        resolve(`${dest}${name}`);
-                                    });
+                                resolve(`${dest}`);
                             }else{
-                                resolve(`${dest}${name}`);
+                                resolve(`${dest}`);
                             }
                         });
                     });

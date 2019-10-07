@@ -1,5 +1,5 @@
 const NEST = require('../.config').Nest;
-let nest = require('unofficial-nest-api');
+const nest = require('unofficial-nest-api');
 
 let toFarenheit = temp => {
     return Math.floor(temp * 1.8 + 32);

@@ -54,6 +54,7 @@ APP.post('/login', (req, res) => {
             sign(response)
                 .then(token => {
                     res.cookie('authToken', token, {maxAge: new Date(Number(new Date()) + 315360000000)});
+                    res.cookie('username', username);
                     res.redirect(referrer || '/');
                 })
                 .catch(error => {

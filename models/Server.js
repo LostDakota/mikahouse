@@ -16,7 +16,7 @@ let format = seconds => {
     return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
 
-var driveSpace = (driveLetter) => {
+var driveSpace = driveLetter => {
     return new Promise((resolve, reject) => {
         diskspace.check('/mnt/' + driveLetter, (err, result) => {
             if(err) reject(err);
@@ -76,10 +76,11 @@ module.exports = {
             Promise.all([module.exports.Ping(), module.exports.Load(), module.exports.Uptime()])
             .then(data => {
                 resolve(data);
-            });
+            })
+            .catch(err => reject(err));
         });        
     },
-    Ping: (construct) => {
+    Ping: construct => {
         return new Promise((resolve, reject) => {
             ping.promise.probe('google.com')
                 .then((res) => {
@@ -89,12 +90,13 @@ module.exports = {
                         Value : res.avg
                     });
                     resolve({name: 'Ping', value: res.avg + 'ms'});
-                });
+                })
+                .catch(err => reject(err));
         });
     },
-    Load: (construct) => {
+    Load: construct => {
         return new Promise((resolve, reject) => {
-            os.cpuUsage((value) => {
+            os.cpuUsage(value => {
                 if(construct) resolve({
                     Name: 'Load',
                     Icon: 'fa-balance-scale',
@@ -104,7 +106,7 @@ module.exports = {
             });
         });
     },
-    Uptime: (construct) => {
+    Uptime: construct => {
         return new Promise((resolve, reject) => {
             var time = format(process.uptime())
             if(construct) resolve({
@@ -113,37 +115,37 @@ module.exports = {
                 Value : time
             });
             resolve({name: 'Uptime', value: time});
+            reject({});
         });
     },
     DiskUsage: () => {
         return new Promise((resolve, reject) => {
-            var drives = ['c', 'd', 'e'];
-            var promises = [];
-            drives.forEach(letter => {
-                promises.push(driveSpace(letter));
-            });
-            Promise.all(promises)
-                .then(results => {
-                    resolve(results);
-                });
+            Promise.all([
+                driveSpace('c'),
+                driveSpace('d'),
+                driveSpace('e')
+            ])
+            .then(results => {
+                resolve(results);
+            })
+            .catch(err => reject(err));
         });
     },
     RecordStats: () => {
         return new Promise((resolve, reject) => {
-            var promises = [
+            Promise.all([
                 module.exports.Ping(false),                
                 module.exports.Load(false),
                 module.exports.Uptime(false)
-            ]
-            Promise.all(promises)
-                .then(results => {
-                    results.forEach(stat => {
-                        MCTX.query(`update server_stats set statistic="${stat.value}" where name="${stat.name}"`, (err, rows, fields) => {
-                            if(err) reject(err);
-                        });
+            ])
+            .then(results => {
+                results.forEach(stat => {
+                    MCTX.query(`update server_stats set statistic="${stat.value}" where name="${stat.name}"`, (err, rows, fields) => {
+                        if(err) reject(err);
                     });
-                    resolve('ok');
                 });
+                resolve('ok');
+            });
         });
     }
 }

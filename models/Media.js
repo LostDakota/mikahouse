@@ -14,7 +14,7 @@ let buildShows = showObj => {
         request.get(`${SICKRAGE.Host}${SICKRAGE.Key}${query}`, (err, response, body) => {
             if(err) reject('error');
             let show = JSON.parse(body).data;
-            Images.Save(`${SICKRAGE.Host}${SICKRAGE.Key}${fanart}`, `/images/fanart/`, `${showObj.indexerid}.jpg`)
+            Images.Save(`${SICKRAGE.Host}${SICKRAGE.Key}${fanart}`, `/images/fanart/${showObj.indexerid}.jpg`, true)
                 .then(response => {
                     show.showtitle = showObj.show_name;
                     show.fanart = response;

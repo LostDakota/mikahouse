@@ -2,10 +2,9 @@ const APP = require('express')();
 let Security = require('../models/Security')
 
 let promises = [
-    Security.CurrentImage(1),
-    Security.CurrentImage(2),
+    Security.CurrentImages(),
     Security.DaysWithEvents(),
-    Security.Status(),
+    Security.IsMotionRunning(),
     Security.TodaysEventCount()
 ]
 
@@ -13,11 +12,18 @@ APP.get('/api/security', (req, res) => {
     Promise.all(promises)
         .then(response => {
             res.json({
-                cameras: [response[0], response[1]],
-                days: response[2],
-                status: response[3].result,
-                eventCount: response[4]
+                cameras: response[0],
+                days: response[1],
+                status: response[2],
+                eventCount: response[3]
             });
+        });
+});
+
+APP.get('/api/security/motion', (rea, res) => {
+    Security.LastFromMotion()
+        .then(response => {
+            res.json(response);
         });
 });
 
@@ -50,7 +56,7 @@ APP.get('/api/security/days', (req, res) => {
 });
 
 APP.get('/api/security/status', (req, res) => {
-    Security.Status()
+    Security.IsMotionRunning()
         .then(response => {
             res.json(response);
         });

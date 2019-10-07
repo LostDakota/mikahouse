@@ -12,6 +12,13 @@ APP.get('/api/control/garage', (req, res) => {
         });
 });
 
+APP.get('/api/control/garage/status', (req, res) => {
+    Control.GarageStatus()
+        .then(response => {
+            res.json(response[0]);
+        });
+});
+
 APP.get('/api/control/thermostat', (req, res) => {
     Climate.Thermostat()
         .then(response => {

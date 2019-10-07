@@ -13,3 +13,5 @@ package-lock.json
 .index-dev.js
 /public/images/security
 /public/images/security/events_ln
+/public/ai-cache
+/public/images/fanart

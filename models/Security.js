@@ -91,8 +91,12 @@ module.exports = {
         return new Promise((resolve, reject) => {
             exec(`ps -aux | grep motion | grep -v grep`, (err, stdout, stderr) => {
                 if(err) reject(err);
-                let running = stdout.indexOf('disabled') === -1;
-                resolve({result: running ? 1 : 0});
+                if(stdout){
+                    let running = stdout.indexOf('disabled') === -1;
+                    resolve({result: running ? 1 : 0});
+                } else {
+                    resolve({result: 0});
+                }
             })
         });
     },
@@ -126,16 +130,24 @@ module.exports = {
                     .then(res => {
                         let anyoneHome = rows.filter(person => person.status === 'Home');
 
-                        if(res.result === 1 && anyoneHome.length > 0){
-                            module.exports.ToggleState()
-                                .then(() => {
-                                    Events.SetEvent(rows[0].name + ' returned. Disabling security.');
-                                });
-                        } else if(res.result === 0 && anyoneHome.length === 0){
-                            module.exports.ToggleState()
-                                .then(() => {
-                                    Events.SetEvent(rows[0].name + ' left. Enabling security.' );
-                                });
+                        if(res.result === 1 && anyoneHome.length > 0) {
+                            if(rows[0].name === 'Drew') {
+                                module.exports.ToggleState()
+                                    .then(() => {
+                                        Events.SetEvent(`${rows[0].name} returned. Disabling security.`);
+                                    });
+                            } else {
+                                Events.SetEvent(`${rows[0].name} returned.`);
+                            }                  
+                        } else if(res.result === 0 && anyoneHome.length === 0) {
+                            if(rows[0].name === 'Drew') {
+                                module.exports.ToggleState()
+                                    .then(() => {
+                                        Events.SetEvent(`${rows[0].name} left. Enabling security.`);
+                                    });
+                            } else {
+                                Events.SetEvent(`${rows[0].name} left.`);
+                            }                            
                         }
                         resolve('success');
                     })

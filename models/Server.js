@@ -18,7 +18,7 @@ let format = seconds => {
 
 var driveSpace = driveLetter => {
     return new Promise((resolve, reject) => {
-        diskspace.check('/mnt/' + driveLetter, (err, result) => {
+        diskspace.check(`/mnt/${driveLetter}`, (err, result) => {
             if(err) reject(err);
             resolve({
                 letter: driveLetter.toUpperCase(),
@@ -55,7 +55,7 @@ module.exports = {
                     return reject(undefined);
                 }                    
                 devices.forEach(device => {
-                    MCTX.query('insert into network (ip, mac) values ("' + device.ip + '", "' + device.mac + '") on duplicate key update recorded=values(recorded)', (err, rows, fields) => {
+                    MCTX.query(`insert into network (ip, mac) values ("${device.ip}", "${device.mac}") on duplicate key update recorded = values(recorded)`, (err, rows, fields) => {
                         if(err) reject(err);
                     });
                 });
@@ -89,7 +89,7 @@ module.exports = {
                         Icon : "fa-wifi",
                         Value : res.avg
                     });
-                    resolve({name: 'Ping', value: res.avg + 'ms'});
+                    resolve({name: 'Ping', value: `${res.avg}ms`});
                 })
                 .catch(err => reject(err));
         });
@@ -100,9 +100,9 @@ module.exports = {
                 if(construct) resolve({
                     Name: 'Load',
                     Icon: 'fa-balance-scale',
-                    Value : Math.floor(value * 100) + '%'
+                    Value : `${Math.floor(value * 100)}%`
                 });
-                resolve({name: 'Load', value: Math.floor(value * 100) + '%'});
+                resolve({name: 'Load', value: `${Math.floor(value * 100)}%`});
             });
         });
     },

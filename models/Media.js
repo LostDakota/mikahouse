@@ -53,7 +53,7 @@ module.exports = {
             let promises = [];
             client.query(`/library/sections/1/recentlyAdded?X-Plex-Container-Start=0&amp;X-Plex-Container-Size=${count || 3}`)
                 .then(data => {
-                    data.MediaContainer.Metadata.slice(0, 3)
+                    data.MediaContainer.Metadata.slice(0, count || 3)
                         .forEach(show => promises.push(buildShows(show)));
                     Promise.all(promises)
                         .then(response => {

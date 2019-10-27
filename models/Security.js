@@ -1,12 +1,11 @@
 const MCTX = require('../components/MikaHouseContext');
-const MOTIONCTX = require('../components/MotionContext');
 const exec = require('child_process').exec;
 const Events = require('../models/Events');
 
 module.exports = {
     Video: id => {
         return new Promise((resolve, reject) => {
-            MOTIONCTX.query(`select * from security where filename like '%${id}.mp4'`, (err, rows, fields) => {
+            MCTX.query(`select * from motion where filename like '%${id}.mp4'`, (err, rows, fields) => {
                 if(err) reject(err);
                 resolve(rows);
             })
@@ -14,7 +13,7 @@ module.exports = {
     },
     LastFromMotion: () => {
         return new Promise((resolve, reject) => {
-            MOTIONCTX.query('select * from security where camera = 1 order by time_stamp desc limit 1', (err, rows, fields) => {
+            MCTX.query('select * from motion where camera = 1 order by time_stamp desc limit 1', (err, rows, fields) => {
                 if(err) reject(err);
                 resolve(rows);
             })
@@ -22,7 +21,7 @@ module.exports = {
     },
     DaysWithEvents: () => {
         return new Promise((resolve, reject) => {
-            MOTIONCTX.query('select date(time_stamp) as day from security group by date(time_stamp) order by day desc', (err, rows, fields) => {
+            MCTX.query('select date(time_stamp) as day from motion group by date(time_stamp) order by day desc', (err, rows, fields) => {
                 if(err) reject(err);
                 resolve(rows);
             })
@@ -34,7 +33,7 @@ module.exports = {
             var date = new Date();
             pageSize = pageSize || 10
             var selectedDay = day === 'undefined' ? date.toLocaleDateString() : day.split('T')[0];
-            MOTIONCTX.query(`select * from security where date(event_time_stamp) = "${selectedDay}" order by event_time_stamp desc`, (err, rows, fields) => {
+            MCTX.query(`select * from motion where date(event_time_stamp) = "${selectedDay}" order by event_time_stamp desc`, (err, rows, fields) => {
                 if(err) reject(err);
                 let events = [];
                 let movies = rows.filter(row => row.file_type === 8);
@@ -56,7 +55,7 @@ module.exports = {
 
     TodaysEventCount: () => {
         return new Promise((resolve, reject) => {
-            MOTIONCTX.query('select count(*) as count from security where event_time_stamp > curdate() and filename like "%mp4"', (err, rows, fields) => {
+            MCTX.query('select count(*) as count from motion where event_time_stamp > curdate() and filename like "%mp4"', (err, rows, fields) => {
                 if(err) reject(err);
 
                 var count = rows ? rows[0].count : 0;
@@ -67,7 +66,7 @@ module.exports = {
 
     LastEvent: () => {
         return new Promise((resolve, reject) => {
-            MOTIONCTX.query('select * from security where filename like "%.jpg" order by event_time_stamp desc limit 1', (err, rows, fields) => {
+            MCTX.query('select * from motion where filename like "%.jpg" order by event_time_stamp desc limit 1', (err, rows, fields) => {
                 if(err) reject(err);
                 if(rows && rows.length > 0){
                     resolve({
@@ -99,12 +98,9 @@ module.exports = {
         return new Promise((resolve, reject) => {
             exec(`ps -aux | grep motion | grep -v grep`, (err, stdout, stderr) => {
                 if(err) reject('error');
-                if(stdout && stdout.length > 0) {
-                    let running = stdout.indexOf('disabled') === -1;
-                    resolve({result: running ? 1 : 0});
-                } else {
-                    resolve({result: 0});
-                }
+                resolve({
+                    result: stdout && stdout.length > 0 && stdout.indexOf('disabled') === -1 ? 1 : 0
+                });
             })
         });
     },

@@ -1,10 +1,17 @@
 const MCTX = require('../components/MikaHouseContext');
 const MOTIONCTX = require('../components/MotionContext');
-let exec = require('child_process').exec;
-
-let Events = require('../models/Events');
+const exec = require('child_process').exec;
+const Events = require('../models/Events');
 
 module.exports = {
+    Video: id => {
+        return new Promise((resolve, reject) => {
+            MOTIONCTX.query(`select * from security where filename like '%${id}.mp4'`, (err, rows, fields) => {
+                if(err) reject(err);
+                resolve(rows);
+            })
+        })
+    },
     LastFromMotion: () => {
         return new Promise((resolve, reject) => {
             MOTIONCTX.query('select * from security where camera = 1 order by time_stamp desc limit 1', (err, rows, fields) => {
@@ -35,6 +42,7 @@ module.exports = {
                 movies.forEach((movie, i) => {
                     if(posters[i]){
                         events.push({
+                            id: movie.filename.split('/').pop().split('.')[0],
                             movie: movie.filename.replace('/mnt/d', ''),
                             stamp: movie.event_time_stamp,
                             poster: posters[i].filename.replace('/mnt/d', '')
@@ -61,7 +69,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             MOTIONCTX.query('select * from security where filename like "%.jpg" order by event_time_stamp desc limit 1', (err, rows, fields) => {
                 if(err) reject(err);
-                if(rows.length > 0){
+                if(rows && rows.length > 0){
                     resolve({
                         time: rows[0].event_time_stamp,
                         image: rows[0].filename.replace('/mnt/d', '/images')
@@ -90,8 +98,8 @@ module.exports = {
     IsMotionRunning: () => {
         return new Promise((resolve, reject) => {
             exec(`ps -aux | grep motion | grep -v grep`, (err, stdout, stderr) => {
-                if(err) reject(err);
-                if(stdout){
+                if(err) reject('error');
+                if(stdout && stdout.length > 0) {
                     let running = stdout.indexOf('disabled') === -1;
                     resolve({result: running ? 1 : 0});
                 } else {
@@ -131,23 +139,15 @@ module.exports = {
                         let anyoneHome = rows.filter(person => person.status === 'Home');
 
                         if(res.result === 1 && anyoneHome.length > 0) {
-                            if(rows[0].name === 'Drew') {
-                                module.exports.ToggleState()
+                            module.exports.ToggleState()
                                     .then(() => {
                                         Events.SetEvent(`${rows[0].name} returned. Disabling security.`);
                                     });
-                            } else {
-                                Events.SetEvent(`${rows[0].name} returned.`);
-                            }                  
                         } else if(res.result === 0 && anyoneHome.length === 0) {
-                            if(rows[0].name === 'Drew') {
-                                module.exports.ToggleState()
+                            module.exports.ToggleState()
                                     .then(() => {
                                         Events.SetEvent(`${rows[0].name} left. Enabling security.`);
                                     });
-                            } else {
-                                Events.SetEvent(`${rows[0].name} left.`);
-                            }                            
                         }
                         resolve('success');
                     })

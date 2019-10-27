@@ -1,8 +1,8 @@
 const Media = require('../models/Media');
 const APP = require('express')();
 
-APP.get('/api/media/newest/:single?', (req, res) => {
-    Media.Newest(req.params.single)
+APP.get('/api/media/newest/:count', (req, res) => {
+    Media.Newest(req.params.count)
         .then(response => {
             res.json(response);
         }).catch(err => {

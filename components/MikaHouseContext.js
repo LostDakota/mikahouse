@@ -6,7 +6,8 @@ let pool = mysql.createPool({
   host     : config.Main.Host,
   user     : config.Main.DbUser,
   password : config.Main.Password,
-  database : config.Main.Database
+  database : config.Main.Database,
+  port     : config.Main.Port
 });
 
 module.exports = pool;

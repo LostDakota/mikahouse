@@ -8,18 +8,14 @@ async function run() {
     const db = await MongoClient.connect("mongodb://localhost:27017/jobserver");
     const agenda = new AGENDA().mongo(db, 'jobs');
 
-    agenda.define('detect', () => {
-        USER.Detect();
-    });
+    agenda.define('detect', () => USER.Detect());
 
     agenda.define('recordStats', () => {
         SERVER.RecordStats();
         SERVER.PollNetwork();
     });
 
-    agenda.define('zoneminder', () => {
-        SECURITY.Auto();
-    });
+    agenda.define('zoneminder', () => SECURITY.Auto());
 
     agenda.on('ready', () => {
         agenda.every('minute', 'detect');

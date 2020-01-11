@@ -24,6 +24,6 @@ APP.get('/api/control/garage/sleepytime', (req, res) => {
         console.log('not good!');
         res.status(200).send();
     }
-})
+});
 
 module.exports = APP;

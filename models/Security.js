@@ -11,6 +11,7 @@ module.exports = {
             })
         })
     },
+    
     LastFromMotion: () => {
         return new Promise((resolve, reject) => {
             MCTX.query('select * from motion where camera = 1 order by time_stamp desc limit 1', (err, rows, fields) => {
@@ -19,6 +20,7 @@ module.exports = {
             })
         })
     },
+
     DaysWithEvents: () => {
         return new Promise((resolve, reject) => {
             MCTX.query('select date(time_stamp) as day from motion group by date(time_stamp) order by day desc', (err, rows, fields) => {
@@ -99,7 +101,7 @@ module.exports = {
             exec(`ps -aux | grep motion | grep -v grep`, (err, stdout, stderr) => {
                 if(err) reject('error');
                 resolve({
-                    result: stdout && stdout.length > 0 && stdout.indexOf('disabled') === -1 ? 1 : 0
+                    result: (stdout && stdout.length > 0) && stdout.indexOf('disabled') === -1 ? 1 : 0
                 });
             })
         });

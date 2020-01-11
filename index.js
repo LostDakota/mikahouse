@@ -1,4 +1,5 @@
 const express = require('express');
+const cluster = require('cluster');
 
 const adapt = require('express-adaptive-images');
 const cookieParser = require('cookie-parser');
@@ -23,7 +24,14 @@ APP.use(adapt(staticPath, defaultOptions));
 APP.use(express.json());
 
 let comp = require('compression');
-let js = require('./components/JobServer');
+let js;
+
+if(cluster.isMaster) {
+    js = require('./components/JobServer');
+    for(var i = 0; i <=3; i++){
+        cluster.fork();
+    }
+}
 
 APP.use(comp({level: 9}));
 

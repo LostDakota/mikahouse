@@ -1,15 +1,6 @@
 const MCTX = require('../components/MikaHouseContext');
 let ping = require('ping');
 
-let RecordChange = (action) => {
-    return new Promise((resolve, reject) => {
-        MCTX.query(`insert into notifications (notif) values ("${action}")`, (err, rows, fields) => {
-            if(err) reject(err);
-            resolve(rows);
-        });
-    });
-}
-
 let RecordOccupancy = (username, isHome) => {
     return new Promise((resolve, reject) => {        
         var status = isHome ? 'Home' : 'Away';

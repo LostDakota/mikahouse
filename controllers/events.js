@@ -15,4 +15,9 @@ APP.get('/api/events/:number', (req, res) => {
         });
 });
 
+APP.get('/api/events/day/:date', (req, res) => {
+    Events.GetDaysNotifications(req.params.date)
+        .then(results => res.json(results));
+})
+
 module.exports = APP;
